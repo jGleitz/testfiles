@@ -1,4 +1,5 @@
 import com.moowork.gradle.node.yarn.YarnTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.0"
@@ -15,7 +16,28 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    val spekVersion = "2.0.9"
+
+    // Spek is a peer dependency which is not declared by this module
+    compileOnly(name = "spek-dsl-jvm", group = "org.spekframework.spek2", version = spekVersion)
+    compileOnly(name = "spek-runtime-jvm", group = "org.spekframework.spek2", version = spekVersion)
+
+    testImplementation(name = "spek-dsl-jvm", version = spekVersion, group = "org.spekframework.spek2")
+    testImplementation(name = "spek-runtime-jvm", group = "org.spekframework.spek2", version = spekVersion)
+    testImplementation(name = "atrium-fluent-en_GB", version = "0.13.0", group = "ch.tutteli.atrium")
+    testImplementation(name = "niok", version = "1.3.4", group = "ch.tutteli.niok")
+    testImplementation(name = "mockk", version = "1.10.0", group = "io.mockk")
+    testRuntimeOnly(name = "spek-runner-junit5", version = spekVersion, group = "org.spekframework.spek2")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 node {
