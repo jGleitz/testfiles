@@ -5,6 +5,7 @@ import ch.tutteli.atrium.api.fluent.en_GB.isDirectory
 import ch.tutteli.atrium.api.fluent.en_GB.isReadable
 import ch.tutteli.atrium.api.fluent.en_GB.isRegularFile
 import ch.tutteli.atrium.api.fluent.en_GB.isWritable
+import ch.tutteli.atrium.api.fluent.en_GB.notToBe
 import ch.tutteli.atrium.api.fluent.en_GB.parent
 import ch.tutteli.atrium.api.fluent.en_GB.startsWith
 import ch.tutteli.atrium.api.fluent.en_GB.toBe
@@ -239,6 +240,25 @@ object DefaultTestFilesSpec: Spek({
                     fileName.startsWith("test-")
                     parent.toBe(mockTestTarget)
                 }
+            }
+
+            it("generates different file names on subsequent creations") {
+                expect(testFiles.createFile()).notToBe(testFiles.createFile())
+                expect(testFiles.createDirectory()).notToBe(testFiles.createDirectory())
+            }
+
+            it("generates the same file names for the same creations") {
+                val mockTest = mockScope<TestScopeImpl>("test")
+
+                testFiles.beforeExecuteTest(mockTest)
+                val firstFile = testFiles.createFile()
+                testFiles.afterExecuteTest(mockTest, Success)
+
+                testFiles.beforeExecuteTest(mockTest)
+                val secondFile = testFiles.createFile()
+                testFiles.afterExecuteTest(mockTest, Success)
+
+                expect(firstFile).toBe(secondFile)
             }
         }
 
