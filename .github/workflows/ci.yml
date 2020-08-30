@@ -6,7 +6,6 @@ on:
   pull_request:
 
 jobs:
-
   build:
     name: Build
     runs-on: ${{ matrix.os }}
@@ -14,7 +13,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         java-version: [8, 11, 13]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -31,18 +29,41 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
       - name: Prepare
-        run: ./gradlew clean prepareCi dependencies
-      - name: Check Commits
-        run: ./gradlew checkCommits
+        run: ./gradlew clean dependencies
       - name: Build
         run: ./gradlew assemble testClasses
       - name: Test
         run: ./gradlew test
 
+  check-commits:
+    name: Check Commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*') }}
+          restore-keys: |
+            gradle-${{ runner.os }}
+            gradle-
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Prepare
+        run: ./gradlew prepareCi
+      - name: Check Commits
+        run: ./gradlew checkCommits
+
   release:
     name: Release Check
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, check-commits]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
