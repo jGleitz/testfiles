@@ -5,10 +5,13 @@ import ch.tutteli.atrium.api.fluent.en_GB.isDirectory
 import ch.tutteli.atrium.api.fluent.en_GB.isReadable
 import ch.tutteli.atrium.api.fluent.en_GB.isRegularFile
 import ch.tutteli.atrium.api.fluent.en_GB.isWritable
+import ch.tutteli.atrium.api.fluent.en_GB.messageContains
 import ch.tutteli.atrium.api.fluent.en_GB.notToBe
+import ch.tutteli.atrium.api.fluent.en_GB.notToThrow
 import ch.tutteli.atrium.api.fluent.en_GB.parent
 import ch.tutteli.atrium.api.fluent.en_GB.startsWith
 import ch.tutteli.atrium.api.fluent.en_GB.toBe
+import ch.tutteli.atrium.api.fluent.en_GB.toThrow
 import ch.tutteli.atrium.api.verbs.expect
 import ch.tutteli.niok.deleteRecursively
 import de.joshuagleitze.test.spek.testfiles.DefaultTestFiles
@@ -190,6 +193,26 @@ object DefaultTestFilesSpec: Spek({
                 }
             }
 
+            it("rejects file names that match the group directory pattern") {
+                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("rejects bad file names"))
+
+                expect { testFiles.createFile("[test") }.notToThrow()
+                expect { testFiles.createFile("test]") }.notToThrow()
+                expect { testFiles.createFile("[test]") }.toThrow<IllegalArgumentException> {
+                    messageContains("[test]")
+                }
+            }
+
+            it("rejects directory names that match the group directory pattern") {
+                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("rejects bad directory names"))
+
+                expect { testFiles.createDirectory("[test") }.notToThrow()
+                expect { testFiles.createDirectory("test]") }.notToThrow()
+                expect { testFiles.createDirectory("[test]") }.toThrow<IllegalArgumentException> {
+                    messageContains("[test]")
+                }
+            }
+
             it("creates an empty file with a generated name") {
                 val mockGroup = mockScope<GroupScopeImpl>("unnamed file creation group")
                 val mockGroupTarget = expectedRootFolder.resolve("[unnamed file creation group]")
@@ -243,12 +266,14 @@ object DefaultTestFilesSpec: Spek({
             }
 
             it("generates different file names on subsequent creations") {
+                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("different file names"))
+
                 expect(testFiles.createFile()).notToBe(testFiles.createFile())
                 expect(testFiles.createDirectory()).notToBe(testFiles.createDirectory())
             }
 
             it("generates the same file names for the same creations") {
-                val mockTest = mockScope<TestScopeImpl>("test")
+                val mockTest = mockScope<TestScopeImpl>("consistent file names")
 
                 testFiles.beforeExecuteTest(mockTest)
                 val firstFile = testFiles.createFile()
