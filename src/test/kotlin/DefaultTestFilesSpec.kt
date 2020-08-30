@@ -27,6 +27,7 @@ import org.spekframework.spek2.style.specification.describe
 import java.nio.file.Files.createDirectories
 import java.nio.file.Files.createDirectory
 import java.nio.file.Files.createFile
+import java.nio.file.Files.delete
 
 object DefaultTestFilesSpec: Spek({
     val fileRoot = freezeFileRoot()
@@ -355,6 +356,18 @@ object DefaultTestFilesSpec: Spek({
                 expect(failureTestfile).exists()
                 testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
                 expect(failureTestfile).exists()
+            }
+
+            it("tolerates deletion of created files") {
+                val mockTest = mockScope<TestScopeImpl>("deletion toleration")
+
+                testFiles.beforeExecuteTest(mockTest)
+                delete(testFiles.createFile(delete = ALWAYS))
+                delete(testFiles.createDirectory(delete = ALWAYS))
+
+                expect {
+                    testFiles.afterExecuteTest(mockTest, Success)
+                }.notToThrow()
             }
         }
     }

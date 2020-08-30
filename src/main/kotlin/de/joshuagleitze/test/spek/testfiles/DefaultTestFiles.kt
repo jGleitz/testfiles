@@ -14,6 +14,7 @@ import org.spekframework.spek2.lifecycle.TestScope
 import org.spekframework.spek2.runtime.scope.ScopeImpl
 import java.io.IOException
 import java.lang.Integer.MAX_VALUE
+import java.nio.file.DirectoryNotEmptyException
 import java.nio.file.FileVisitResult
 import java.nio.file.FileVisitResult.CONTINUE
 import java.nio.file.FileVisitResult.SKIP_SUBTREE
@@ -21,9 +22,7 @@ import java.nio.file.Files.createDirectories
 import java.nio.file.Files.createDirectory
 import java.nio.file.Files.createFile
 import java.nio.file.Files.delete
-import java.nio.file.Files.exists
 import java.nio.file.Files.isDirectory
-import java.nio.file.Files.list
 import java.nio.file.Files.walkFileTree
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -147,31 +146,34 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
  */
 fun Root.testFiles(): TestFiles = DefaultTestFiles().also { this.registerListener(it) }
 
-private fun clear(path: Path) {
-	when {
-		isDirectory(path) -> deleteNonGroupFilesRecursively(path)
-		exists(path) -> delete(path)
-	}
-}
-
-private fun deleteNonGroupFilesRecursively(rootDirectory: Path) {
-	walkFileTree(rootDirectory, object: SimpleFileVisitor<Path>() {
+private fun clear(path: Path) = tolerateDoesNotExist(path) {
+	walkFileTree(path, object: SimpleFileVisitor<Path>() {
 		override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult {
 			checkNotNull(dir) { "dir was null" }
-			return if (dir != rootDirectory && SCOPE_DIRECTORY_PATTERN.matches(dir.fileName.toString())) SKIP_SUBTREE
+			return if (dir != path && SCOPE_DIRECTORY_PATTERN.matches(dir.fileName.toString())) SKIP_SUBTREE
 			else CONTINUE
 		}
 
 		override fun postVisitDirectory(dir: Path, exc: IOException?) =
-			super.postVisitDirectory(dir, exc).also { if (dir != rootDirectory) deleteIfEmpty(dir) }
+			super.postVisitDirectory(dir, exc).also { if (dir != path) deleteIfEmpty(dir) }
 
 		override fun visitFile(file: Path, attrs: BasicFileAttributes?) =
-			super.visitFile(file, attrs).also { delete(file) }
+			super.visitFile(file, attrs).also { tolerateDoesNotExist(file) { delete(file) } }
 	})
 }
 
-private fun deleteIfEmpty(path: Path) {
-	if (!list(path).findAny().isPresent) {
-		delete(path)
+private fun deleteIfEmpty(directory: Path) = tolerateDoesNotExist(directory) {
+	try {
+		delete(directory)
+	} catch (notEmpty: DirectoryNotEmptyException) {
+		// swallow
+	}
+}
+
+private inline fun tolerateDoesNotExist(path: Path, block: (Path) -> Unit) {
+	try {
+		block(path)
+	} catch (noSuchFile: java.nio.file.NoSuchFileException) {
+		// swallow
 	}
 }
