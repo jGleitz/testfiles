@@ -1,0 +1,88 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>DefaultTestFiles - spek-testfiles</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">spek-testfiles</a>&nbsp;/&nbsp;<a href="../index.html">de.joshuagleitze.test.spek.testfiles</a>&nbsp;/&nbsp;<a href="./index.html">DefaultTestFiles</a><br/>
+<br/>
+<h1>DefaultTestFiles</h1>
+<code><span class="keyword">class </span><span class="identifier">DefaultTestFiles</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">LifecycleListener</span><span class="symbol">, </span><a href="../-test-files/index.html"><span class="identifier">TestFiles</span></a></code>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="after-execute-group.html">afterExecuteGroup</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">afterExecuteGroup</span><span class="symbol">(</span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$afterExecuteGroup(org.spekframework.spek2.lifecycle.GroupScope, org.spekframework.spek2.lifecycle.ExecutionResult)/group">group</span><span class="symbol">:</span>&nbsp;<span class="identifier">GroupScope</span><span class="symbol">, </span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$afterExecuteGroup(org.spekframework.spek2.lifecycle.GroupScope, org.spekframework.spek2.lifecycle.ExecutionResult)/result">result</span><span class="symbol">:</span>&nbsp;<span class="identifier">ExecutionResult</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="after-execute-test.html">afterExecuteTest</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">afterExecuteTest</span><span class="symbol">(</span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$afterExecuteTest(org.spekframework.spek2.lifecycle.TestScope, org.spekframework.spek2.lifecycle.ExecutionResult)/test">test</span><span class="symbol">:</span>&nbsp;<span class="identifier">TestScope</span><span class="symbol">, </span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$afterExecuteTest(org.spekframework.spek2.lifecycle.TestScope, org.spekframework.spek2.lifecycle.ExecutionResult)/result">result</span><span class="symbol">:</span>&nbsp;<span class="identifier">ExecutionResult</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="before-execute-group.html">beforeExecuteGroup</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">beforeExecuteGroup</span><span class="symbol">(</span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$beforeExecuteGroup(org.spekframework.spek2.lifecycle.GroupScope)/group">group</span><span class="symbol">:</span>&nbsp;<span class="identifier">GroupScope</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="before-execute-test.html">beforeExecuteTest</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">beforeExecuteTest</span><span class="symbol">(</span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$beforeExecuteTest(org.spekframework.spek2.lifecycle.TestScope)/test">test</span><span class="symbol">:</span>&nbsp;<span class="identifier">TestScope</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="create-directory.html">createDirectory</a></h4>
+</td>
+<td>
+<p>Creates a test directory in the directory of the current Spek group or test.</p>
+<code><span class="keyword">fun </span><span class="identifier">createDirectory</span><span class="symbol">(</span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$createDirectory(kotlin.String, de.joshuagleitze.test.spek.testfiles.DeletionMode)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$createDirectory(kotlin.String, de.joshuagleitze.test.spek.testfiles.DeletionMode)/delete">delete</span><span class="symbol">:</span>&nbsp;<a href="../-deletion-mode/index.html"><span class="identifier">DeletionMode</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Path</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="create-file.html">createFile</a></h4>
+</td>
+<td>
+<p>Creates a test file in the directory of the current Spek group or test.</p>
+<code><span class="keyword">fun </span><span class="identifier">createFile</span><span class="symbol">(</span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$createFile(kotlin.String, de.joshuagleitze.test.spek.testfiles.DeletionMode)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="de.joshuagleitze.test.spek.testfiles.DefaultTestFiles$createFile(kotlin.String, de.joshuagleitze.test.spek.testfiles.DeletionMode)/delete">delete</span><span class="symbol">:</span>&nbsp;<a href="../-deletion-mode/index.html"><span class="identifier">DeletionMode</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Path</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-s-c-o-p-e_-d-i-r-e-c-t-o-r-y_-p-a-t-t-e-r-n.html">SCOPE_DIRECTORY_PATTERN</a></h4>
+</td>
+<td>
+<p>Pattern of directories that are created to group test files by their Spek group.</p>
+<code><span class="keyword">val </span><span class="identifier">SCOPE_DIRECTORY_PATTERN</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/-regex/index.html"><span class="identifier">Regex</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="determine-test-files-root-directory.html">determineTestFilesRootDirectory</a></h4>
+</td>
+<td>
+<p>Determines the root directory within which all test files will be created.</p>
+<code><span class="keyword">fun </span><span class="identifier">determineTestFilesRootDirectory</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Path</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
