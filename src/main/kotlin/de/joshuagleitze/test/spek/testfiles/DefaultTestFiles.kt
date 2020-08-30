@@ -34,14 +34,14 @@ import java.util.Random
 import java.util.Stack
 
 class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
-	private val scopeContext = Stack<TestFilesScopeContext>().also { it.push(ROOT_SCOPE) }
+	private val scopeFiles = Stack<ScopeFiles>().also { it.push(ROOT_SCOPE_FILES) }
 
-	override fun createDirectory(name: String?, delete: DeletionMode): Path = with(scopeContext.peek()) {
-		createDirectory(prepareTarget(name, delete))
+	override fun createDirectory(name: String?, delete: DeletionMode): Path = with(scopeFiles.peek()) {
+		createDirectory(prepareNewPath(name, delete))
 	}
 
-	override fun createFile(name: String?, delete: DeletionMode): Path = with(scopeContext.peek()) {
-		createFile(prepareTarget(name, delete))
+	override fun createFile(name: String?, delete: DeletionMode): Path = with(scopeFiles.peek()) {
+		createFile(prepareNewPath(name, delete))
 	}
 
 	override fun beforeExecuteTest(test: TestScope) = enter(test)
@@ -51,25 +51,14 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 	override fun afterExecuteGroup(group: GroupScope, result: ExecutionResult) = leave(result)
 
 	private fun enter(target: Scope) {
-		val currentContext = scopeContext.peek()
-		val nextScopeDirectoryName = "[${target.name}]"
-		val nextScopeDirectory = currentContext.targetDirectory.resolve(nextScopeDirectoryName)
+		val currentScopeFiles = scopeFiles.peek()
+		val nextScopeDirectory = currentScopeFiles.targetDirectory.resolve("[${target.name}]")
 		clear(nextScopeDirectory)
-		scopeContext.push(TestFilesScopeContext(nextScopeDirectory))
+		scopeFiles.push(ScopeFiles(nextScopeDirectory))
 	}
 
 	private fun leave(result: ExecutionResult) {
-		val oldContext = scopeContext.pop()
-
-		if (oldContext.created) {
-			synchronized(oldContext) {
-				oldContext.toDelete.forEach(::clear)
-				if (result == Success) {
-					oldContext.toDeleteIfSuccess.forEach(::clear)
-				}
-				deleteIfEmpty(oldContext.targetDirectory)
-			}
-		}
+		scopeFiles.pop().cleanup(wasSuccess = result is Success)
 	}
 
 	private val Scope.name: String
@@ -80,15 +69,15 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 			else -> "unknown scope"
 		}
 
-	private class TestFilesScopeContext(
+	private class ScopeFiles(
 		val targetDirectory: Path,
-		val toDeleteIfSuccess: MutableSet<Path> = HashSet(),
-		val toDelete: MutableSet<Path> = HashSet(),
-		var created: Boolean = false
+		private val toDeleteIfSuccess: MutableSet<Path> = HashSet(),
+		private val toDelete: MutableSet<Path> = HashSet(),
+		private var created: Boolean = false
 	) {
 		private val idGenerator = Random(targetDirectory.hashCode().toLong())
 
-		fun prepareTarget(name: String?, delete: DeletionMode): Path {
+		fun prepareNewPath(name: String?, delete: DeletionMode): Path {
 			val targetName = name?.apply(::checkFileName) ?: generateTestFileName()
 			val target = this.ensureExistingTargetDirectory().resolve(targetName)
 			when (delete) {
@@ -112,12 +101,24 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 			return targetDirectory
 		}
 
+		fun cleanup(wasSuccess: Boolean) {
+			if (created) {
+				synchronized(this) {
+					toDelete.forEach(::clear)
+					if (wasSuccess) {
+						toDeleteIfSuccess.forEach(::clear)
+					}
+					deleteIfEmpty(targetDirectory)
+				}
+			}
+		}
+
 		private fun generateTestFileName() = "test-" + idGenerator.nextInt(MAX_VALUE)
 	}
 
 	companion object {
-		private val ROOT_SCOPE by lazy {
-			TestFilesScopeContext(testFilesDirectory)
+		private val ROOT_SCOPE_FILES by lazy {
+			ScopeFiles(testFilesRootDirectory)
 		}
 
 		/**
@@ -129,7 +130,7 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 		 * The root directory within which all test files will be created. Accessing this property may create the
 		 * directory if it did not exist before.
 		 */
-		val testFilesDirectory: Path by lazy {
+		val testFilesRootDirectory: Path by lazy {
 			when {
 				isDirectory(Paths.get("build")) -> createDirectories(Paths.get("build/test-outputs"))
 				isDirectory(Paths.get("target")) -> createDirectories(Paths.get("target/test-outputs"))
