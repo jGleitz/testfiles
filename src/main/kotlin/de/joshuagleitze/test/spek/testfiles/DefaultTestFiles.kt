@@ -118,7 +118,7 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 
 	companion object {
 		private val ROOT_SCOPE_FILES by lazy {
-			ScopeFiles(testFilesRootDirectory)
+			ScopeFiles(determineTestFilesRootDirectory())
 		}
 
 		/**
@@ -127,16 +127,13 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 		val SCOPE_DIRECTORY_PATTERN = Regex("^\\[.*]$")
 
 		/**
-		 * The root directory within which all test files will be created. Accessing this property may create the
-		 * directory if it did not exist before.
+		 * Determines the root directory within which all test files will be created.
 		 */
-		val testFilesRootDirectory: Path by lazy {
-			when {
-				isDirectory(Paths.get("build")) -> createDirectories(Paths.get("build/test-outputs"))
-				isDirectory(Paths.get("target")) -> createDirectories(Paths.get("target/test-outputs"))
-				isDirectory(Paths.get("test-outputs")) -> createDirectories(Paths.get("test-outputs"))
-				else -> createDirectories(Paths.get(System.getProperty("java.io.tmpdir")).resolve("spek-test-outputs"))
-			}
+		fun determineTestFilesRootDirectory(): Path = when {
+			isDirectory(Paths.get("build")) -> Paths.get("build/test-outputs")
+			isDirectory(Paths.get("target")) -> Paths.get("target/test-outputs")
+			isDirectory(Paths.get("test-outputs")) -> Paths.get("test-outputs")
+			else -> Paths.get(System.getProperty("java.io.tmpdir")).resolve("spek-test-outputs")
 		}
 
 		private fun checkFileName(name: String) {

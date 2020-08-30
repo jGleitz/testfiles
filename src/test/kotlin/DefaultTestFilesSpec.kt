@@ -13,8 +13,8 @@ import ch.tutteli.atrium.api.fluent.en_GB.startsWith
 import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.fluent.en_GB.toThrow
 import ch.tutteli.atrium.api.verbs.expect
-import ch.tutteli.niok.deleteRecursively
 import de.joshuagleitze.test.spek.testfiles.DefaultTestFiles
+import de.joshuagleitze.test.spek.testfiles.DefaultTestFiles.Companion.determineTestFilesRootDirectory
 import de.joshuagleitze.test.spek.testfiles.DeletionMode.ALWAYS
 import de.joshuagleitze.test.spek.testfiles.DeletionMode.IF_SUCCESSFUL
 import de.joshuagleitze.test.spek.testfiles.DeletionMode.NEVER
@@ -27,26 +27,47 @@ import org.spekframework.spek2.style.specification.describe
 import java.nio.file.Files.createDirectories
 import java.nio.file.Files.createDirectory
 import java.nio.file.Files.createFile
-import java.nio.file.Paths
 
 object DefaultTestFilesSpec: Spek({
-    val expectedRootFolder = Paths.get("build/test-outputs")
+    val fileRoot = freezeFileRoot()
     lateinit var testFiles: DefaultTestFiles
-
-    beforeGroup {
-        expectedRootFolder.deleteRecursively()
-    }
 
     beforeEachTest {
         testFiles = DefaultTestFiles()
     }
 
     describe("DefaultTestFiles") {
-        describe("Housekeeping") {
+        describe("root folder") {
+            beforeEachTest { deletePotentialTargetDirectories() }
+
+            it("uses the build directory if present") {
+                createDirectories(buildDir)
+                createDirectories(targetDir)
+                createDirectories(testOutputsDir)
+                expect(determineTestFilesRootDirectory()).toBe(buildDir.resolve("test-outputs"))
+            }
+
+            it("uses the target directory if present") {
+                createDirectories(targetDir)
+                createDirectories(testOutputsDir)
+                expect(determineTestFilesRootDirectory()).toBe(targetDir.resolve("test-outputs"))
+            }
+
+            it("uses the test-outputs directory if present") {
+                createDirectories(testOutputsDir)
+                expect(determineTestFilesRootDirectory()).toBe(testOutputsDir)
+            }
+
+            it("falls back to the tmpdir") {
+                expect(determineTestFilesRootDirectory()).toBe(tmpDir.resolve("spek-test-outputs"))
+            }
+        }
+
+        describe("housekeeping") {
             it("clears pre-existing files when entering a group") {
                 val mockGroup = mockScope<GroupScopeImpl>("delete pre-existing group")
 
-                val scopeDir = createDirectories(expectedRootFolder.resolve("[delete pre-existing group]"))
+                val scopeDir = createDirectories(fileRoot.resolve("[delete pre-existing group]"))
                 val testDir = createDirectory(scopeDir.resolve("pre-existing dir"))
                 val subTestFile = createFile(testDir.resolve("sub"))
                 val testFile = createFile(scopeDir.resolve("pre-existing file"))
@@ -64,7 +85,7 @@ object DefaultTestFilesSpec: Spek({
             it("clears pre-existing files when entering a test") {
                 val mockTest = mockScope<TestScopeImpl>("delete pre-existing test")
 
-                val scopeDir = createDirectories(expectedRootFolder.resolve("[delete pre-existing test]"))
+                val scopeDir = createDirectories(fileRoot.resolve("[delete pre-existing test]"))
                 val testDir = createDirectory(scopeDir.resolve("pre-existing dir"))
                 val subTestFile = createFile(testDir.resolve("deeper pre-existing file"))
                 val testFile = createFile(scopeDir.resolve("pre-existing file"))
@@ -82,7 +103,7 @@ object DefaultTestFilesSpec: Spek({
             it("retains existing group directories when entering a group") {
                 val mockGroup = mockScope<GroupScopeImpl>("retain pre-existing group")
 
-                val scopeDir = createDirectories(expectedRootFolder.resolve("[retain pre-existing group]"))
+                val scopeDir = createDirectories(fileRoot.resolve("[retain pre-existing group]"))
                 val groupTestDir = createDirectory(scopeDir.resolve("[test]"))
                 val subTestFile = createFile(groupTestDir.resolve("deeper pre-existing file"))
                 val testFile = createFile(scopeDir.resolve("pre-existing file"))
@@ -100,7 +121,7 @@ object DefaultTestFilesSpec: Spek({
             it("retains existing group directories when entering a test") {
                 val mockTest = mockScope<TestScopeImpl>("retain pre-existing test")
 
-                val scopeDir = createDirectories(expectedRootFolder.resolve("[retain pre-existing test]"))
+                val scopeDir = createDirectories(fileRoot.resolve("[retain pre-existing test]"))
                 val groupTestDir = createDirectory(scopeDir.resolve("[test]"))
                 val subTestFile = createFile(groupTestDir.resolve("deeper pre-existing file"))
                 val testFile = createFile(scopeDir.resolve("pre-existing file"))
@@ -117,7 +138,7 @@ object DefaultTestFilesSpec: Spek({
 
             it("does not create a group or test folder if not necessary") {
                 val mockGroup = mockScope<GroupScopeImpl>("no premature creation group")
-                val mockGroupTarget = expectedRootFolder.resolve("[no premature creation group]")
+                val mockGroupTarget = fileRoot.resolve("[no premature creation group]")
                 val mockSubGroup = mockScope<GroupScopeImpl>("sub")
                 val mockSubGroupTarget = mockGroupTarget.resolve("[sub]")
                 val mockTest = mockScope<TestScopeImpl>("test")
@@ -143,7 +164,7 @@ object DefaultTestFilesSpec: Spek({
         describe("file creation") {
             it("creates an empty file with the provided name") {
                 val mockGroup = mockScope<GroupScopeImpl>("named file creation group")
-                val mockGroupTarget = expectedRootFolder.resolve("[named file creation group]")
+                val mockGroupTarget = fileRoot.resolve("[named file creation group]")
                 val mockTest = mockScope<TestScopeImpl>("test")
                 val mockTestTarget = mockGroupTarget.resolve("[test]")
 
@@ -170,7 +191,7 @@ object DefaultTestFilesSpec: Spek({
 
             it("creates an empty directory with the provided name") {
                 val mockGroup = mockScope<GroupScopeImpl>("named directory creation group")
-                val mockGroupTarget = expectedRootFolder.resolve("[named directory creation group]")
+                val mockGroupTarget = fileRoot.resolve("[named directory creation group]")
                 val mockTest = mockScope<TestScopeImpl>("test")
                 val mockTestTarget = mockGroupTarget.resolve("[test]")
 
@@ -215,7 +236,7 @@ object DefaultTestFilesSpec: Spek({
 
             it("creates an empty file with a generated name") {
                 val mockGroup = mockScope<GroupScopeImpl>("unnamed file creation group")
-                val mockGroupTarget = expectedRootFolder.resolve("[unnamed file creation group]")
+                val mockGroupTarget = fileRoot.resolve("[unnamed file creation group]")
                 val mockTest = mockScope<TestScopeImpl>("test")
                 val mockTestTarget = mockGroupTarget.resolve("[test]")
 
@@ -242,7 +263,7 @@ object DefaultTestFilesSpec: Spek({
 
             it("creates an empty directory with a generated name") {
                 val mockGroup = mockScope<GroupScopeImpl>("unnamed directory creation group")
-                val mockGroupTarget = expectedRootFolder.resolve("[unnamed directory creation group]")
+                val mockGroupTarget = fileRoot.resolve("[unnamed directory creation group]")
                 val mockTest = mockScope<TestScopeImpl>("test")
                 val mockTestTarget = mockGroupTarget.resolve("[test]")
 
