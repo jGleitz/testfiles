@@ -26,6 +26,7 @@ import java.nio.file.Files.isDirectory
 import java.nio.file.Files.list
 import java.nio.file.Files.walkFileTree
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
@@ -128,10 +129,10 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 		 */
 		val testFilesDirectory: Path by lazy {
 			when {
-				isDirectory(Path.of("build")) -> createDirectories(Path.of("build/test-outputs"))
-				isDirectory(Path.of("target")) -> createDirectories(Path.of("target/test-outputs"))
-				isDirectory(Path.of("test-outputs")) -> createDirectories(Path.of("test-outputs"))
-				else -> createDirectories(Path.of(System.getProperty("java.io.tmpdir")).resolve("spek-test-outputs"))
+				isDirectory(Paths.get("build")) -> createDirectories(Paths.get("build/test-outputs"))
+				isDirectory(Paths.get("target")) -> createDirectories(Paths.get("target/test-outputs"))
+				isDirectory(Paths.get("test-outputs")) -> createDirectories(Paths.get("test-outputs"))
+				else -> createDirectories(Paths.get(System.getProperty("java.io.tmpdir")).resolve("spek-test-outputs"))
 			}
 		}
 

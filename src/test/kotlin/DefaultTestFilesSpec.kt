@@ -1,19 +1,8 @@
-import ch.tutteli.atrium.api.fluent.en_GB.exists
-import ch.tutteli.atrium.api.fluent.en_GB.existsNot
-import ch.tutteli.atrium.api.fluent.en_GB.fileName
-import ch.tutteli.atrium.api.fluent.en_GB.isDirectory
-import ch.tutteli.atrium.api.fluent.en_GB.isReadable
-import ch.tutteli.atrium.api.fluent.en_GB.isRegularFile
-import ch.tutteli.atrium.api.fluent.en_GB.isWritable
-import ch.tutteli.atrium.api.fluent.en_GB.parent
-import ch.tutteli.atrium.api.fluent.en_GB.startsWith
-import ch.tutteli.atrium.api.fluent.en_GB.toBe
+import ch.tutteli.atrium.api.fluent.en_GB.*
 import ch.tutteli.atrium.api.verbs.expect
 import ch.tutteli.niok.deleteRecursively
 import de.joshuagleitze.test.spek.testfiles.DefaultTestFiles
-import de.joshuagleitze.test.spek.testfiles.DeletionMode.ALWAYS
-import de.joshuagleitze.test.spek.testfiles.DeletionMode.IF_SUCCESSFUL
-import de.joshuagleitze.test.spek.testfiles.DeletionMode.NEVER
+import de.joshuagleitze.test.spek.testfiles.DeletionMode.*
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.lifecycle.ExecutionResult.Failure
 import org.spekframework.spek2.lifecycle.ExecutionResult.Success
@@ -23,10 +12,10 @@ import org.spekframework.spek2.style.specification.describe
 import java.nio.file.Files.createDirectories
 import java.nio.file.Files.createDirectory
 import java.nio.file.Files.createFile
-import java.nio.file.Path
+import java.nio.file.Paths
 
-object DefaultTestFilesSpec: Spek({
-    val expectedRootFolder: Path = Path.of("build/test-outputs")
+object DefaultTestFilesSpec : Spek({
+    val expectedRootFolder = Paths.get("build/test-outputs")
     lateinit var testFiles: DefaultTestFiles
 
     beforeGroup {
