@@ -35,6 +35,12 @@ jobs:
         run: ./gradlew assemble testClasses
       - name: Test
         run: ./gradlew test
+      - name: Publish Test Report
+        uses: scacap/action-surefire-report@v1
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          report_paths: '**/build/test-results/test/TEST-*.xml'
 
   check-commits:
     name: Check Commits

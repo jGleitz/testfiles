@@ -40,6 +40,7 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	reports.junitXml.isEnabled = true
 }
 
 java {
