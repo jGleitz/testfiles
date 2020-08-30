@@ -18,10 +18,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
-          path: ~/.gradle
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*') }}
+          path: |
+            ~/.gradle
+            .yarn/cache
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
           restore-keys: |
             gradle-${{ runner.os }}
             gradle-
@@ -52,10 +54,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
-          path: ~/.gradle
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*') }}
+          path: |
+            ~/.gradle
+            .yarn/cache
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
           restore-keys: |
             gradle-${{ runner.os }}
             gradle-
@@ -76,10 +80,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
-          path: ~/.gradle
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*') }}
+          path: |
+            ~/.gradle
+            .yarn/cache
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
           restore-keys: |
             gradle-${{ runner.os }}
             gradle-
