@@ -47,9 +47,9 @@ object DefaultTestFilesSpec: Spek({
                 val mockGroup = mockScope<GroupScopeImpl>("delete pre-existing group")
 
                 val scopeDir = createDirectories(expectedRootFolder.resolve("[delete pre-existing group]"))
-                val testDir = createDirectory(scopeDir.resolve("test"))
+                val testDir = createDirectory(scopeDir.resolve("pre-existing dir"))
                 val subTestFile = createFile(testDir.resolve("sub"))
-                val testFile = createFile(scopeDir.resolve("test file"))
+                val testFile = createFile(scopeDir.resolve("pre-existing file"))
 
                 testFiles.beforeExecuteGroup(mockGroup)
 
@@ -65,9 +65,9 @@ object DefaultTestFilesSpec: Spek({
                 val mockTest = mockScope<TestScopeImpl>("delete pre-existing test")
 
                 val scopeDir = createDirectories(expectedRootFolder.resolve("[delete pre-existing test]"))
-                val testDir = createDirectory(scopeDir.resolve("test"))
-                val subTestFile = createFile(testDir.resolve("sub"))
-                val testFile = createFile(scopeDir.resolve("test file"))
+                val testDir = createDirectory(scopeDir.resolve("pre-existing dir"))
+                val subTestFile = createFile(testDir.resolve("deeper pre-existing file"))
+                val testFile = createFile(scopeDir.resolve("pre-existing file"))
 
                 testFiles.beforeExecuteTest(mockTest)
 
@@ -84,8 +84,8 @@ object DefaultTestFilesSpec: Spek({
 
                 val scopeDir = createDirectories(expectedRootFolder.resolve("[retain pre-existing group]"))
                 val groupTestDir = createDirectory(scopeDir.resolve("[test]"))
-                val subTestFile = createFile(groupTestDir.resolve("sub"))
-                val testFile = createFile(scopeDir.resolve("test file"))
+                val subTestFile = createFile(groupTestDir.resolve("deeper pre-existing file"))
+                val testFile = createFile(scopeDir.resolve("pre-existing file"))
 
                 testFiles.beforeExecuteGroup(mockGroup)
 
@@ -102,8 +102,8 @@ object DefaultTestFilesSpec: Spek({
 
                 val scopeDir = createDirectories(expectedRootFolder.resolve("[retain pre-existing test]"))
                 val groupTestDir = createDirectory(scopeDir.resolve("[test]"))
-                val subTestFile = createFile(groupTestDir.resolve("sub"))
-                val testFile = createFile(scopeDir.resolve("test file"))
+                val subTestFile = createFile(groupTestDir.resolve("deeper pre-existing file"))
+                val testFile = createFile(scopeDir.resolve("pre-existing file"))
 
                 testFiles.beforeExecuteTest(mockTest)
 
@@ -289,7 +289,7 @@ object DefaultTestFilesSpec: Spek({
 
         describe("file cleanup") {
             it("deletes a file that has been marked to be deleted ALWAYS") {
-                val mockTest = mockScope<TestScopeImpl>("test")
+                val mockTest = mockScope<TestScopeImpl>("delete ALWAYS")
 
                 testFiles.beforeExecuteTest(mockTest)
                 val successTestfile = testFiles.createFile(delete = ALWAYS)
@@ -305,7 +305,7 @@ object DefaultTestFilesSpec: Spek({
             }
 
             it("deletes a file that has been marked to be deleted after success if appropriate") {
-                val mockTest = mockScope<TestScopeImpl>("test")
+                val mockTest = mockScope<TestScopeImpl>("delete IF_SUCCESSFUL")
 
                 testFiles.beforeExecuteTest(mockTest)
                 val successTestfile = testFiles.createFile(delete = IF_SUCCESSFUL)
@@ -321,7 +321,7 @@ object DefaultTestFilesSpec: Spek({
             }
 
             it("does not delete a file that has been marked to be deleted NEVER") {
-                val mockTest = mockScope<TestScopeImpl>("test")
+                val mockTest = mockScope<TestScopeImpl>("delete NEVER")
 
                 testFiles.beforeExecuteTest(mockTest)
                 val successTestfile = testFiles.createFile(delete = NEVER)
