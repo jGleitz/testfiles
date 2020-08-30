@@ -29,7 +29,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
-import java.util.*
+import java.util.HashSet
+import java.util.Random
+import java.util.Stack
 
 class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 	private val scopeContext = Stack<TestFilesScopeContext>().also { it.push(ROOT_SCOPE) }
@@ -72,27 +74,27 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 
 	private val Scope.name: String
 		get() = when (this) {
-            is ScopeImpl -> this.id.name
-            is GroupScope -> "unknown group"
-            is TestScope -> "unknown test"
+			is ScopeImpl -> this.id.name
+			is GroupScope -> "unknown group"
+			is TestScope -> "unknown test"
 			else -> "unknown scope"
 		}
 
 	private class TestFilesScopeContext(
-        val targetDirectory: Path,
-        val toDeleteIfSuccess: MutableSet<Path> = HashSet(),
-        val toDelete: MutableSet<Path> = HashSet(),
-        var created: Boolean = false
-    ) {
+		val targetDirectory: Path,
+		val toDeleteIfSuccess: MutableSet<Path> = HashSet(),
+		val toDelete: MutableSet<Path> = HashSet(),
+		var created: Boolean = false
+	) {
 		private val idGenerator = Random(targetDirectory.hashCode().toLong())
 
 		fun prepareTarget(name: String?, delete: DeletionMode): Path {
 			val targetName = name?.apply(::checkFileName) ?: generateTestFileName()
 			val target = this.ensureExistingTargetDirectory().resolve(targetName)
 			when (delete) {
-                ALWAYS -> toDelete.add(target)
-                IF_SUCCESSFUL -> toDeleteIfSuccess.add(target)
-                NEVER -> Unit
+				ALWAYS -> toDelete.add(target)
+				IF_SUCCESSFUL -> toDeleteIfSuccess.add(target)
+				NEVER -> Unit
 			}
 			return target
 		}
@@ -156,18 +158,18 @@ private fun clear(path: Path) {
 
 private fun deleteNonGroupFilesRecursively(rootDirectory: Path) {
 	walkFileTree(rootDirectory, object: SimpleFileVisitor<Path>() {
-        override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult {
-            checkNotNull(dir) { "dir was null" }
-            return if (dir != rootDirectory && SCOPE_DIRECTORY_PATTERN.matches(dir.fileName.toString())) SKIP_SUBTREE
-            else CONTINUE
-        }
+		override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult {
+			checkNotNull(dir) { "dir was null" }
+			return if (dir != rootDirectory && SCOPE_DIRECTORY_PATTERN.matches(dir.fileName.toString())) SKIP_SUBTREE
+			else CONTINUE
+		}
 
-        override fun postVisitDirectory(dir: Path, exc: IOException?) =
-            super.postVisitDirectory(dir, exc).also { if (dir != rootDirectory) deleteIfEmpty(dir) }
+		override fun postVisitDirectory(dir: Path, exc: IOException?) =
+			super.postVisitDirectory(dir, exc).also { if (dir != rootDirectory) deleteIfEmpty(dir) }
 
-        override fun visitFile(file: Path, attrs: BasicFileAttributes?) =
-            super.visitFile(file, attrs).also { delete(file) }
-    })
+		override fun visitFile(file: Path, attrs: BasicFileAttributes?) =
+			super.visitFile(file, attrs).also { delete(file) }
+	})
 }
 
 private fun deleteIfEmpty(path: Path) {

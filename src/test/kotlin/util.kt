@@ -8,7 +8,7 @@ import org.spekframework.spek2.runtime.scope.ScopeType
 import java.nio.file.Files.readAllBytes
 import java.nio.file.Path
 
-internal inline fun <reified S : ScopeImpl> mockScope(name: String) = mockk<S>().also {
+internal inline fun <reified S: ScopeImpl> mockScope(name: String) = mockk<S>().also {
     every { it.id } returns ScopeId(ScopeType.Scope, name)
 }
 
