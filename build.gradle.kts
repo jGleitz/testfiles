@@ -41,6 +41,12 @@ dependencies {
 tasks.withType<Test> {
 	useJUnitPlatform()
 	reports.junitXml.isEnabled = true
+
+	val testPwd = buildDir.resolve("test-pwd")
+	doFirst {
+		testPwd.mkdirs()
+	}
+	workingDir = testPwd
 }
 
 java {
