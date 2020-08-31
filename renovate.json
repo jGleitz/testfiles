@@ -1,5 +1,24 @@
 {
   "extends": [
     "config:base"
+  ],
+  "assignees": [
+    "jGleitz"
+  ],
+  "pinVersions": true,
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "updateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest",
+        "lockFileMaintenance"
+      ],
+      "automerge": true
+    }
   ]
 }
