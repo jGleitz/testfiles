@@ -155,7 +155,7 @@ private fun clear(path: Path) = tolerateDoesNotExist(path) {
 		}
 
 		override fun postVisitDirectory(dir: Path, exc: IOException?) =
-			super.postVisitDirectory(dir, exc).also { if (dir != path) deleteIfEmpty(dir) }
+			super.postVisitDirectory(dir, exc).also { deleteIfEmpty(dir) }
 
 		override fun visitFile(file: Path, attrs: BasicFileAttributes?) =
 			super.visitFile(file, attrs).also { tolerateDoesNotExist(file) { delete(file) } }
