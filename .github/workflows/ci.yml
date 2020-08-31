@@ -21,7 +21,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.gradle
+            ~/.gradle/wrapper
+            ~/.gradle/caches
             .yarn/cache
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
           restore-keys: |
@@ -57,7 +58,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.gradle
+            ~/.gradle/wrapper
+            ~/.gradle/caches
             .yarn/cache
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
           restore-keys: |
@@ -83,7 +85,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.gradle
+            ~/.gradle/wrapper
+            ~/.gradle/caches
             .yarn/cache
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
           restore-keys: |
