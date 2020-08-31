@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-	val spekVersion = "2.0.9"
+	val spekVersion = "2.0.12"
 
 	// Spek is a peer dependency which is not declared by this module
 	compileOnly(name = "spek-dsl-jvm", group = "org.spekframework.spek2", version = spekVersion)
