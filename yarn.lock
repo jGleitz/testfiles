@@ -41,7 +41,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/cli@npm:^9.1.2":
+"@commitlint/cli@npm:9.1.2":
   version: 9.1.2
   resolution: "@commitlint/cli@npm:9.1.2"
   dependencies:
@@ -63,7 +63,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/config-conventional@npm:^9.1.2":
+"@commitlint/config-conventional@npm:9.1.2":
   version: 9.1.2
   resolution: "@commitlint/config-conventional@npm:9.1.2"
   dependencies:
@@ -2526,7 +2526,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:^4.2.5":
+"husky@npm:4.2.5":
   version: 4.2.5
   resolution: "husky@npm:4.2.5"
   dependencies:
@@ -5237,7 +5237,7 @@ resolve@^1.10.0:
   languageName: node
   linkType: hard
 
-"semantic-release@npm:17.1.1, semantic-release@npm:^17.1.1":
+"semantic-release@npm:17.1.1":
   version: 17.1.1
   resolution: "semantic-release@npm:17.1.1"
   dependencies:
@@ -5510,10 +5510,10 @@ resolve@^1.10.0:
   version: 0.0.0-use.local
   resolution: "spek-testfiles@workspace:."
   dependencies:
-    "@commitlint/cli": ^9.1.2
-    "@commitlint/config-conventional": ^9.1.2
-    husky: ^4.2.5
-    semantic-release: ^17.1.1
+    "@commitlint/cli": 9.1.2
+    "@commitlint/config-conventional": 9.1.2
+    husky: 4.2.5
+    semantic-release: 17.1.1
   languageName: unknown
   linkType: soft
 
