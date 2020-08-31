@@ -75,7 +75,6 @@ object DefaultTestFilesSpec: Spek({
 
                 testFiles.beforeExecuteGroup(mockGroup)
 
-                expect(scopeDir).isDirectory()
                 expect(testDir).existsNot()
                 expect(subTestFile).existsNot()
                 expect(testFile).existsNot()
@@ -93,7 +92,6 @@ object DefaultTestFilesSpec: Spek({
 
                 testFiles.beforeExecuteTest(mockTest)
 
-                expect(scopeDir).isDirectory()
                 expect(testDir).existsNot()
                 expect(subTestFile).existsNot()
                 expect(testFile).existsNot()
@@ -315,15 +313,21 @@ object DefaultTestFilesSpec: Spek({
 
                 testFiles.beforeExecuteTest(mockTest)
                 val successTestfile = testFiles.createFile(delete = ALWAYS)
+                val successTestdir = testFiles.createDirectory(delete = ALWAYS)
                 expect(successTestfile).exists()
+                expect(successTestdir).exists()
                 testFiles.afterExecuteTest(mockTest, Success)
                 expect(successTestfile).existsNot()
+                expect(successTestdir).existsNot()
 
                 testFiles.beforeExecuteTest(mockTest)
                 val failureTestfile = testFiles.createFile(delete = ALWAYS)
+                val failureTestdir = testFiles.createDirectory(delete = ALWAYS)
                 expect(failureTestfile).exists()
+                expect(failureTestdir).exists()
                 testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
                 expect(failureTestfile).existsNot()
+                expect(failureTestdir).existsNot()
             }
 
             it("deletes a file that has been marked to be deleted after success if appropriate") {
@@ -331,15 +335,22 @@ object DefaultTestFilesSpec: Spek({
 
                 testFiles.beforeExecuteTest(mockTest)
                 val successTestfile = testFiles.createFile(delete = IF_SUCCESSFUL)
+                val successTestdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
                 expect(successTestfile).exists()
+                expect(successTestdir).exists()
                 testFiles.afterExecuteTest(mockTest, Success)
                 expect(successTestfile).existsNot()
+                expect(successTestdir).existsNot()
+
 
                 testFiles.beforeExecuteTest(mockTest)
                 val failureTestfile = testFiles.createFile(delete = IF_SUCCESSFUL)
+                val failureTestdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
                 expect(failureTestfile).exists()
+                expect(failureTestdir).exists()
                 testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
                 expect(failureTestfile).exists()
+                expect(failureTestdir).exists()
             }
 
             it("does not delete a file that has been marked to be deleted NEVER") {
@@ -347,15 +358,21 @@ object DefaultTestFilesSpec: Spek({
 
                 testFiles.beforeExecuteTest(mockTest)
                 val successTestfile = testFiles.createFile(delete = NEVER)
+                val successTestdir = testFiles.createDirectory(delete = NEVER)
                 expect(successTestfile).exists()
+                expect(successTestdir).exists()
                 testFiles.afterExecuteTest(mockTest, Success)
                 expect(successTestfile).exists()
+                expect(successTestdir).exists()
 
                 testFiles.beforeExecuteTest(mockTest)
                 val failureTestfile = testFiles.createFile(delete = NEVER)
+                val failureTestdir = testFiles.createDirectory(delete = NEVER)
                 expect(failureTestfile).exists()
+                expect(failureTestdir).exists()
                 testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
                 expect(failureTestfile).exists()
+                expect(failureTestdir).exists()
             }
 
             it("tolerates deletion of created files") {
