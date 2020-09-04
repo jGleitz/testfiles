@@ -2,6 +2,7 @@ import com.moowork.gradle.node.yarn.YarnTask
 import de.marcphilipp.gradle.nexus.NexusRepository
 import org.gradle.api.JavaVersion.VERSION_1_8
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -36,6 +37,12 @@ dependencies {
 	testImplementation(name = "niok", version = "1.3.4", group = "ch.tutteli.niok")
 	testImplementation(name = "mockk", version = "1.10.0", group = "io.mockk")
 	testRuntimeOnly(name = "spek-runner-junit5", version = spekVersion, group = "org.spekframework.spek2")
+
+	constraints {
+		testImplementation("org.jetbrains.kotlin:kotlin-reflect:${KotlinCompilerVersion.VERSION}") {
+			because("transitive dependencies refer to previous versions, but all Kotlin artefacts need to have the same version")
+		}
+	}
 }
 
 tasks.withType<Test> {
