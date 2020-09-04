@@ -106,12 +106,12 @@ val sourcesJar by tasks.creating(Jar::class) {
 	from(sourceSets.main.get().allSource)
 }
 
-val dokka by tasks.getting(DokkaTask::class) {
-	configuration {
+tasks.withType<DokkaTask> {
+	dokkaSourceSets.named("main") {
 		sourceLink {
-			path = "./"
-			url = "https://github.com/$githubRepository/blob/master"
-			lineSuffix = "#L"
+			localDirectory.set(file("src/main/kotlin"))
+			remoteUrl.set(uri("https://github.com/$githubRepository/blob/master/src/main/kotlin").toURL())
+			remoteLineSuffix.set("#L")
 		}
 	}
 }
@@ -120,7 +120,7 @@ val dokkaJar by tasks.creating(Jar::class) {
 	group = "build"
 	description = "Assembles the Kotlin docs with Dokka"
 	archiveClassifier.set("javadoc")
-	from(dokka)
+	from(tasks.named("dokkaJavadoc"))
 }
 
 artifacts {

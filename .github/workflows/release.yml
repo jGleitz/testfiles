@@ -66,11 +66,11 @@ jobs:
       - name: Prepare
         run: ./gradlew clean prepareCi dependencies
       - name: Generate Documentation
-        run: ./gradlew dokka
+        run: ./gradlew dokkaHtml
         env:
           ORG_GRADLE_PROJECT_githubRepository: ${{ github.repository }}
       - name: Publish Documentation
         uses: peaceiris/actions-gh-pages@v3.0.3
         with:
-          publish_dir: ./build/dokka
+          publish_dir: ./build/dokka/html
           deploy_key: ${{ secrets.GH_PAGES_DEPLOY_KEY }}
