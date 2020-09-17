@@ -5272,9 +5272,9 @@ resolve@^1.10.0:
   languageName: node
   linkType: hard
 
-"semantic-release@npm:17.1.1":
-  version: 17.1.1
-  resolution: "semantic-release@npm:17.1.1"
+"semantic-release@npm:17.1.2":
+  version: 17.1.2
+  resolution: "semantic-release@npm:17.1.2"
   dependencies:
     "@semantic-release/commit-analyzer": ^8.0.0
     "@semantic-release/error": ^2.2.0
@@ -5306,7 +5306,7 @@ resolve@^1.10.0:
     yargs: ^15.0.1
   bin:
     semantic-release: bin/semantic-release.js
-  checksum: 991b468ef8d602f1635512d9b4ea2bf8614da2f5fcd0b88158d191107be2661c8d8ff014fececb354c238e32939847ab4f1e7597f0c2c8a254ba6081d11da3f6
+  checksum: f5126d7f310c8f79996cf13d469ae6b0b8142ff1009988174253fbc36bf1590755cbf7b8e97799d5f0f279e1d026e7693c62b820219b09918544716ed575d9d1
   languageName: node
   linkType: hard
 
@@ -5548,7 +5548,7 @@ resolve@^1.10.0:
     "@commitlint/cli": 11.0.0
     "@commitlint/config-conventional": 11.0.0
     husky: 4.3.0
-    semantic-release: 17.1.1
+    semantic-release: 17.1.2
   languageName: unknown
   linkType: soft
 
