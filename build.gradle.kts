@@ -35,7 +35,7 @@ dependencies {
 	testImplementation(name = "spek-runtime-jvm", group = "org.spekframework.spek2", version = spekVersion)
 	testImplementation(name = "atrium-fluent-en_GB", version = "0.13.0", group = "ch.tutteli.atrium")
 	testImplementation(name = "niok", version = "1.3.4", group = "ch.tutteli.niok")
-	testImplementation(name = "mockk", version = "1.10.0", group = "io.mockk")
+	testImplementation(name = "mockk", version = "1.10.2", group = "io.mockk")
 	testRuntimeOnly(name = "spek-runner-junit5", version = spekVersion, group = "org.spekframework.spek2")
 
 	constraints {
