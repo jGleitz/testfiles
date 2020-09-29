@@ -1,4 +1,5 @@
-$dokka.format:html
+$dokka.format:html-v1
 $dokka.linkExtension:html
-$dokka.location:de.joshuagleitze.test.spek.testfiles$testFiles(org.spekframework.spek2.dsl.Root)de.joshuagleitze.test.spek.testfiles/org.spekframework.spek2.dsl.-root/test-files.html
+
 de.joshuagleitze.test.spek.testfiles
+
