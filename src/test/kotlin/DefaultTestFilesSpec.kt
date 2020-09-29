@@ -330,7 +330,7 @@ object DefaultTestFilesSpec: Spek({
                 expect(failureTestdir).existsNot()
             }
 
-            it("deletes a file that has been marked to be deleted after success if appropriate") {
+            it("deletes a file that has been marked to be deleted IF_SUCCESSFUL only if a test was successful") {
                 val mockTest = mockScope<TestScopeImpl>("delete IF_SUCCESSFUL")
 
                 testFiles.beforeExecuteTest(mockTest)
@@ -351,6 +351,28 @@ object DefaultTestFilesSpec: Spek({
                 testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
                 expect(failureTestfile).exists()
                 expect(failureTestdir).exists()
+            }
+
+            it("does not delete a group file that has been marked to be deleted IF_SUCCESSFUL if a test in the group failed") {
+                val mockGroup = mockScope<GroupScopeImpl>("delete IF_SUCCESSFUL group")
+                val mockTest = mockScope<TestScopeImpl>("delete IF_SUCCESSFUL test")
+
+                testFiles.beforeExecuteGroup(mockGroup)
+                val successGroupTestfile = testFiles.createFile(delete = IF_SUCCESSFUL)
+                val successGroupTestdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
+
+                testFiles.beforeExecuteTest(mockTest)
+                val successTestTestfile = testFiles.createFile(delete = IF_SUCCESSFUL)
+                val successTestTestdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
+
+                val ifSuccessFiles = listOf(successGroupTestfile, successGroupTestdir, successTestTestfile, successTestTestdir)
+                ifSuccessFiles.forEach { expect(it).exists() }
+
+                testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
+                ifSuccessFiles.forEach { expect(it).exists() }
+
+                testFiles.afterExecuteGroup(mockGroup, Success)
+                ifSuccessFiles.forEach { expect(it).exists() }
             }
 
             it("does not delete a file that has been marked to be deleted NEVER") {
