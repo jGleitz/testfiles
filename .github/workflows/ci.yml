@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
   pull_request:
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
         java-version: [ 8, 11, 14 ]
       fail-fast: false
     steps:
@@ -23,8 +23,7 @@ jobs:
           path: |
             ~/.gradle/wrapper
             ~/.gradle/caches
-            .yarn/cache
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*') }}
           restore-keys: |
             gradle-${{ runner.os }}
             gradle-
@@ -33,7 +32,7 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
       - name: Prepare
-        run: ./gradlew clean prepareCi dependencies
+        run: ./gradlew clean dependencies
       - name: Build
         run: ./gradlew assemble testClasses
       - name: Test
@@ -46,59 +45,19 @@ jobs:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           check_name: Test Failures (${{ matrix.os }}, ${{ matrix.java-version }})
 
-  check-commits:
-    name: Check Commits
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/wrapper
-            ~/.gradle/caches
-            .yarn/cache
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
-          restore-keys: |
-            gradle-${{ runner.os }}
-            gradle-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - name: Prepare
-        run: ./gradlew clean prepareCi dependencies
-      - name: Check Commits
-        run: ./gradlew checkCommits
-
   release:
     name: Release Check
     runs-on: ubuntu-latest
-    needs: [build, check-commits]
+    needs: build
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
         with:
-          path: |
-            ~/.gradle/wrapper
-            ~/.gradle/caches
-            .yarn/cache
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
-          restore-keys: |
-            gradle-${{ runner.os }}
-            gradle-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - name: Prepare
-        run: ./gradlew clean prepareCi dependencies
+          node-version: 14
       - name: Release Check
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
-        run: ./gradlew checkRelease
+        run: npx semantic-release
+

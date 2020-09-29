@@ -1,4 +1,3 @@
-import com.moowork.gradle.node.yarn.YarnTask
 import de.marcphilipp.gradle.nexus.NexusRepository
 import org.gradle.api.JavaVersion.VERSION_1_8
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -8,7 +7,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	kotlin("jvm") version "1.4.0"
 	id("com.palantir.git-version") version "0.12.3"
-	id("com.github.node-gradle.node") version "2.2.4"
 	id("org.jetbrains.dokka") version "1.4.10"
 	`maven-publish`
 	signing
@@ -65,39 +63,6 @@ tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		jvmTarget = "1.8"
 	}
-}
-
-node {
-	download = true
-	version = "12.18.3"
-}
-
-val yarnInstall by tasks.registering(YarnTask::class) {
-	args = listOf("install")
-}
-
-val prepare by tasks.registering {
-	group = "build setup"
-	dependsOn(yarnInstall)
-}
-
-val yarnInstallCi by tasks.registering(YarnTask::class) {
-	args = listOf("install", "--immutable")
-}
-
-val prepareCi by tasks.registering {
-	group = "build setup"
-	dependsOn(yarnInstallCi)
-}
-
-val checkCommits by tasks.creating(YarnTask::class) {
-	group = "verification"
-	args = listOf("commitlint")
-}
-
-val checkRelease by tasks.creating(YarnTask::class) {
-	group = "release"
-	args = listOf("semantic-release")
 }
 
 val ossrhUsername: String? by project
