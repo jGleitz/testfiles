@@ -6,7 +6,7 @@ import de.joshuagleitze.test.spek.testfiles.DeletionMode.IF_SUCCESSFUL
 import de.joshuagleitze.test.spek.testfiles.DeletionMode.NEVER
 import org.spekframework.spek2.dsl.Root
 import org.spekframework.spek2.lifecycle.ExecutionResult
-import org.spekframework.spek2.lifecycle.ExecutionResult.Success
+import org.spekframework.spek2.lifecycle.ExecutionResult.Failure
 import org.spekframework.spek2.lifecycle.GroupScope
 import org.spekframework.spek2.lifecycle.LifecycleListener
 import org.spekframework.spek2.lifecycle.Scope
@@ -57,7 +57,10 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 	}
 
 	private fun leave(result: ExecutionResult) {
-		scopeFiles.pop().cleanup(wasSuccess = result is Success)
+		if (result is Failure) {
+			scopeFiles.forEach { it.reportFailure() }
+		}
+		scopeFiles.pop().cleanup()
 	}
 
 	private val Scope.name: String
@@ -74,6 +77,7 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 		private val toDelete: MutableSet<Path> = HashSet(),
 		private var created: Boolean = false
 	) {
+		private var wasSuccess = true
 		private val idGenerator = Random(targetDirectory.hashCode().toLong())
 
 		fun prepareNewPath(name: String?, delete: DeletionMode): Path {
@@ -100,7 +104,7 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 			return targetDirectory
 		}
 
-		fun cleanup(wasSuccess: Boolean) {
+		fun cleanup() {
 			if (created) {
 				synchronized(this) {
 					toDelete.forEach(::clear)
@@ -110,6 +114,10 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 					deleteIfEmpty(targetDirectory)
 				}
 			}
+		}
+
+		fun reportFailure() {
+			wasSuccess = false
 		}
 
 		private fun generateTestFileName() = "test-" + idGenerator.nextInt(MAX_VALUE)
