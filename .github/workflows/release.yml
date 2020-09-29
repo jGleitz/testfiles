@@ -2,7 +2,7 @@ name: Release
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 jobs:
   release:
@@ -17,8 +17,7 @@ jobs:
           path: |
             ~/.gradle/wrapper
             ~/.gradle/caches
-            .yarn/cache
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*') }}
           restore-keys: |
             gradle-${{ runner.os }}
             gradle-
@@ -27,11 +26,11 @@ jobs:
         with:
           java-version: 11
       - name: Prepare
-        run: ./gradlew clean prepareCi dependencies
+        run: ./gradlew clean dependencies
       - name: Assemble Artefacts
         run: ./gradlew assemble
         env:
-           ORG_GRADLE_PROJECT_githubRepository: ${{ github.repository }}
+          ORG_GRADLE_PROJECT_githubRepository: ${{ github.repository }}
       - name: Release Artefacts
         run: ./gradlew release
         env:
@@ -54,8 +53,7 @@ jobs:
           path: |
             ~/.gradle/wrapper
             ~/.gradle/caches
-            .yarn/cache
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*', 'yarn.lock') }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*') }}
           restore-keys: |
             gradle-${{ runner.os }}
             gradle-
@@ -64,7 +62,7 @@ jobs:
         with:
           java-version: 11
       - name: Prepare
-        run: ./gradlew clean prepareCi dependencies
+        run: ./gradlew clean dependencies
       - name: Generate Documentation
         run: ./gradlew dokkaHtml
         env:
