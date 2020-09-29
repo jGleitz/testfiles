@@ -1,4 +1,4 @@
-# spek-testfiles [![CI Status](https://github.com/jGleitz/spek-testfiles/workflows/CI/badge.svg)](https://github.com/jGleitz/string-notation/actions) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/spek-testfiles/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/string-notation)
+# spek-testfiles [![CI Status](https://github.com/jGleitz/spek-testfiles/workflows/CI/badge.svg)](https://github.com/jGleitz/spek-testfiles/actions) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/spek-testfiles/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/spek-testfiles)
 
 [Spek](https://www.spekframework.org/) extension to easily create files and directories for testing purposes.
 
