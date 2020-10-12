@@ -19,10 +19,10 @@ internal inline fun <reified S: ScopeImpl> mockScope(name: String) = mockk<S>().
 
 internal val Expect<Path>.content get() = feature("string content") { String(readAllBytes(this)) }
 
-val buildDir = Paths.get("build")
-val targetDir = Paths.get("target")
-val testOutputsDir = Paths.get("test-outputs")
-val tmpDir = Paths.get(System.getProperty("java.io.tmpdir"))
+val buildDir = Paths.get("build").toAbsolutePath()
+val targetDir = Paths.get("target").toAbsolutePath()
+val testOutputsDir = Paths.get("test-outputs").toAbsolutePath()
+val tmpDir = Paths.get(System.getProperty("java.io.tmpdir")).toAbsolutePath()
 
 fun deletePotentialTargetDirectories() {
     listOf(buildDir, targetDir, testOutputsDir).forEach { it.deleteRecursively() }
