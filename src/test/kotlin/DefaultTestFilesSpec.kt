@@ -6,6 +6,7 @@ import ch.tutteli.atrium.api.fluent.en_GB.isDirectory
 import ch.tutteli.atrium.api.fluent.en_GB.isReadable
 import ch.tutteli.atrium.api.fluent.en_GB.isRegularFile
 import ch.tutteli.atrium.api.fluent.en_GB.isWritable
+import ch.tutteli.atrium.api.fluent.en_GB.matches
 import ch.tutteli.atrium.api.fluent.en_GB.messageContains
 import ch.tutteli.atrium.api.fluent.en_GB.notToBe
 import ch.tutteli.atrium.api.fluent.en_GB.notToThrow
@@ -161,6 +162,39 @@ object DefaultTestFilesSpec: Spek({
             }
         }
 
+        describe("file name checks") {
+            it("rejects file names that match the group directory pattern") {
+                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("rejects bad file names"))
+
+                expect { testFiles.createFile("[test") }.notToThrow()
+                expect { testFiles.createFile("test]") }.notToThrow()
+                expect { testFiles.createFile("[test]") }.toThrow<IllegalArgumentException> {
+                    messageContains("[test]")
+                }
+            }
+
+            it("rejects directory names that match the group directory pattern") {
+                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("rejects bad directory names"))
+
+                expect { testFiles.createDirectory("[test") }.notToThrow()
+                expect { testFiles.createDirectory("test]") }.notToThrow()
+                expect { testFiles.createDirectory("[test]") }.toThrow<IllegalArgumentException> {
+                    messageContains("[test]")
+                }
+            }
+
+            listOf('/', '\\', '<', '>', ':', '\"', '|', '?', '*', '\u0000').forEach { badCharacter ->
+                it("escapes '$badCharacter' if necessary") {
+                    testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("test with -$badCharacter- in it"))
+
+                    expect { testFiles.createFile("test") }.notToThrow {
+                        // check that / \ is not messing up the directory structure
+                        parent.fileName.matches(Regex(".test with -[^-]- in it."))
+                    }
+                }
+            }
+        }
+
         describe("file creation") {
             it("creates an empty file with the provided name") {
                 val mockGroup = mockScope<GroupScopeImpl>("named file creation group")
@@ -211,26 +245,6 @@ object DefaultTestFilesSpec: Spek({
                     isWritable()
                     fileName.toBe("testdir")
                     parent.toBe(mockTestTarget)
-                }
-            }
-
-            it("rejects file names that match the group directory pattern") {
-                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("rejects bad file names"))
-
-                expect { testFiles.createFile("[test") }.notToThrow()
-                expect { testFiles.createFile("test]") }.notToThrow()
-                expect { testFiles.createFile("[test]") }.toThrow<IllegalArgumentException> {
-                    messageContains("[test]")
-                }
-            }
-
-            it("rejects directory names that match the group directory pattern") {
-                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("rejects bad directory names"))
-
-                expect { testFiles.createDirectory("[test") }.notToThrow()
-                expect { testFiles.createDirectory("test]") }.notToThrow()
-                expect { testFiles.createDirectory("[test]") }.toThrow<IllegalArgumentException> {
-                    messageContains("[test]")
                 }
             }
 
