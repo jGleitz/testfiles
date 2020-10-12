@@ -141,7 +141,7 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 			isDirectory(Paths.get("target")) -> Paths.get("target/test-outputs")
 			isDirectory(Paths.get("test-outputs")) -> Paths.get("test-outputs")
 			else -> Paths.get(System.getProperty("java.io.tmpdir")).resolve("spek-test-outputs")
-		}
+		}.toAbsolutePath()
 
 		private fun checkFileName(name: String) {
 			require(!name.matches(Regex("^\\[.*]$"))) { "A test file name must not start with '[' and end with ']'! was: '$name'" }
