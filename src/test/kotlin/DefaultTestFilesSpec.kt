@@ -184,12 +184,17 @@ object DefaultTestFilesSpec: Spek({
             }
 
             listOf('/', '\\', '<', '>', ':', '\"', '|', '?', '*', '\u0000').forEach { badCharacter ->
-                it("escapes '$badCharacter' if necessary") {
-                    testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("test with -$badCharacter- in it"))
+                listOf(
+                    "group" to { name: String -> testFiles.beforeExecuteGroup(mockScope<GroupScopeImpl>(name)) },
+                    "test" to { name: String -> testFiles.beforeExecuteTest(mockScope<TestScopeImpl>(name)) }
+                ).forEach { (scopeType, enterScope) ->
+                    it("escapes '$badCharacter' in a $scopeType name if necessary") {
+                        enterScope("test with -$badCharacter- in it")
 
-                    expect { testFiles.createFile("test") }.notToThrow {
-                        // check that / \ is not messing up the directory structure
-                        parent.fileName.matches(Regex(".test with -[^-]- in it."))
+                        expect { testFiles.createFile("test") }.notToThrow {
+                            // check that / \ is not messing up the directory structure
+                            parent.fileName.matches(Regex(".test with -.- in it."))
+                        }
                     }
                 }
             }

@@ -51,7 +51,7 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 
 	private fun enter(target: Scope) {
 		val currentScopeFiles = scopeFiles.peek()
-		val nextScopeDirectory = currentScopeFiles.targetDirectory.resolve("[${target.name}]")
+		val nextScopeDirectory = currentScopeFiles.targetDirectory.resolve("[${escapeScopeName(target.name)}]")
 		clear(nextScopeDirectory)
 		scopeFiles.push(ScopeFiles(nextScopeDirectory))
 	}
@@ -62,6 +62,8 @@ class DefaultTestFiles internal constructor(): LifecycleListener, TestFiles {
 		}
 		scopeFiles.pop().cleanup()
 	}
+
+	private fun escapeScopeName(name: String) = name.replace(invalidFileNameCharacters, "-")
 
 	private val Scope.name: String
 		get() = when (this) {
@@ -184,4 +186,12 @@ private inline fun tolerateDoesNotExist(path: Path, block: (Path) -> Unit) {
 	} catch (noSuchFile: java.nio.file.NoSuchFileException) {
 		// swallow
 	}
+}
+
+private val unixInvalidCharacters get() = Regex("[/\u0000]")
+private val windowsInvalidCharacters get() = Regex("[/\\\\<>:\"|?*\u0000]")
+private val invalidFileNameCharacters by lazy {
+	val osName = System.getProperty("os.name").toLowerCase()
+	if (setOf("nix", "nux", "aix", "mac").any { osName.contains(it) }) unixInvalidCharacters
+	else windowsInvalidCharacters // default to windows because it is the most restrictive
 }
