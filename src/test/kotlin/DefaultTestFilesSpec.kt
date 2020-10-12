@@ -1,5 +1,6 @@
 import ch.tutteli.atrium.api.fluent.en_GB.exists
 import ch.tutteli.atrium.api.fluent.en_GB.existsNot
+import ch.tutteli.atrium.api.fluent.en_GB.feature
 import ch.tutteli.atrium.api.fluent.en_GB.fileName
 import ch.tutteli.atrium.api.fluent.en_GB.isDirectory
 import ch.tutteli.atrium.api.fluent.en_GB.isReadable
@@ -231,6 +232,13 @@ object DefaultTestFilesSpec: Spek({
                 expect { testFiles.createDirectory("[test]") }.toThrow<IllegalArgumentException> {
                     messageContains("[test]")
                 }
+            }
+
+            it("hands out absolute paths") {
+                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("hands out absolute paths"))
+
+                expect(testFiles.createFile("testFile")).feature("isAbsolute") { isAbsolute }.toBe(true)
+                expect(testFiles.createDirectory("testDir")).feature("isAbsolute") { isAbsolute }.toBe(true)
             }
 
             it("creates an empty file with a generated name") {
