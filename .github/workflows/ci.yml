@@ -39,11 +39,10 @@ jobs:
         run: ./gradlew test
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
-        if: failure()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: '**/build/test-results/test/TEST-*.xml'
-          check_name: Test Failures (${{ matrix.os }}, ${{ matrix.java-version }})
+          check_name: Test Results (${{ matrix.os }}, ${{ matrix.java-version }})
 
   release:
     name: Release Check
