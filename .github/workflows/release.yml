@@ -68,7 +68,7 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_githubRepository: ${{ github.repository }}
       - name: Publish Documentation
-        uses: peaceiris/actions-gh-pages@v3.0.3
+        uses: peaceiris/actions-gh-pages@v3.7.3
         with:
           publish_dir: ./build/dokka/html
           deploy_key: ${{ secrets.GH_PAGES_DEPLOY_KEY }}
