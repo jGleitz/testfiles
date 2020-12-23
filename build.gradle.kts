@@ -31,7 +31,7 @@ dependencies {
 
 	testImplementation(name = "spek-dsl-jvm", version = spekVersion, group = "org.spekframework.spek2")
 	testImplementation(name = "spek-runtime-jvm", group = "org.spekframework.spek2", version = spekVersion)
-	testImplementation(name = "atrium-fluent-en_GB", version = "0.14.0", group = "ch.tutteli.atrium")
+	testImplementation(name = "atrium-fluent-en_GB", version = "0.15.0", group = "ch.tutteli.atrium")
 	testImplementation(name = "niok", version = "1.3.4", group = "ch.tutteli.niok")
 	testImplementation(name = "mockk", version = "1.10.2", group = "io.mockk")
 	testRuntimeOnly(name = "spek-runner-junit5", version = spekVersion, group = "org.spekframework.spek2")
