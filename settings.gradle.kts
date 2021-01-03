@@ -1,2 +1,3 @@
-rootProject.name = "spek-testfiles"
+rootProject.name = "testfiles"
 
+include("kotest", "spek")
