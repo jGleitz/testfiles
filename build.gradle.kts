@@ -5,9 +5,9 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.4.0"
-	id("com.palantir.git-version") version "0.12.3"
+	kotlin("jvm") version "1.4.21"
 	id("org.jetbrains.dokka") version "1.4.20"
+	id("com.palantir.git-version") version "0.12.3"
 	`maven-publish`
 	signing
 	id("de.marcphilipp.nexus-publish") version "0.4.0"
@@ -17,6 +17,13 @@ plugins {
 group = "de.joshuagleitze"
 version = if (isSnapshot) versionDetails.gitHash else versionDetails.lastTag.drop("v")
 status = if (isSnapshot) "snapshot" else "release"
+val gitRef = if (isSnapshot) versionDetails.gitHash else versionDetails.lastTag
+
+subprojects {
+	group = rootProject.group
+	version = rootProject.version
+	status = rootProject.status
+}
 
 allprojects {
 	repositories {
@@ -25,12 +32,11 @@ allprojects {
 }
 
 dependencies {
-	testImplementation(name = "spek-dsl-jvm", version = "2.0.15", group = "org.spekframework.spek2")
-	testImplementation(name = "spek-runtime-jvm", group = "org.spekframework.spek2", version = "2.0.15")
+	val spekVersion = "2.0.15"
+
+	testImplementation(name = "spek-dsl-jvm", version = spekVersion, group = "org.spekframework.spek2")
 	testImplementation(name = "atrium-fluent-en_GB", version = "0.15.0", group = "ch.tutteli.atrium")
-	testImplementation(name = "niok", version = "1.3.4", group = "ch.tutteli.niok")
-	testImplementation(name = "mockk", version = "1.10.4", group = "io.mockk")
-	testRuntimeOnly(name = "spek-runner-junit5", version = "2.0.15", group = "org.spekframework.spek2")
+	testRuntimeOnly(name = "spek-runner-junit5", version = spekVersion, group = "org.spekframework.spek2")
 
 	constraints {
 		testImplementation(kotlin("reflect", version = KotlinCompilerVersion.VERSION))
@@ -42,9 +48,14 @@ java {
 	targetCompatibility = VERSION_1_8
 }
 
+kotlin {
+	explicitApi()
+}
+
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		jvmTarget = "1.8"
+		freeCompilerArgs += "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
 	}
 }
 
@@ -71,8 +82,7 @@ nexusStaging {
 	numberOfRetries = 42
 }
 
-project.evaluationDependsOnChildren()
-
+evaluationDependsOnChildren()
 val closeAndReleaseRepository by project.tasks
 
 allprojects {
@@ -86,8 +96,9 @@ allprojects {
 	tasks.withType<DokkaTask> {
 		dokkaSourceSets.named("main") {
 			sourceLink {
+				val projectPath = projectDir.absoluteFile.relativeTo(rootProject.projectDir.absoluteFile)
 				localDirectory.set(file("src/main/kotlin"))
-				remoteUrl.set(uri("https://github.com/$githubRepository/blob/master/src/main/kotlin").toURL())
+				remoteUrl.set(uri("https://github.com/$githubRepository/blob/$gitRef/$projectPath/src/main/kotlin").toURL())
 				remoteLineSuffix.set("#L")
 			}
 		}

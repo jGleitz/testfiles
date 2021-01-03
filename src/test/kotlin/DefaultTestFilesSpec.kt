@@ -1,7 +1,11 @@
+package de.joshuagleitze.testfiles
+
+import ch.tutteli.atrium.api.fluent.en_GB.and
 import ch.tutteli.atrium.api.fluent.en_GB.exists
 import ch.tutteli.atrium.api.fluent.en_GB.existsNot
 import ch.tutteli.atrium.api.fluent.en_GB.feature
 import ch.tutteli.atrium.api.fluent.en_GB.fileName
+import ch.tutteli.atrium.api.fluent.en_GB.isAbsolute
 import ch.tutteli.atrium.api.fluent.en_GB.isDirectory
 import ch.tutteli.atrium.api.fluent.en_GB.isReadable
 import ch.tutteli.atrium.api.fluent.en_GB.isRegularFile
@@ -15,426 +19,324 @@ import ch.tutteli.atrium.api.fluent.en_GB.startsWith
 import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.fluent.en_GB.toThrow
 import ch.tutteli.atrium.api.verbs.expect
-import de.joshuagleitze.test.spek.testfiles.DefaultTestFiles
-import de.joshuagleitze.test.spek.testfiles.DefaultTestFiles.Companion.determineTestFilesRootDirectory
-import de.joshuagleitze.test.spek.testfiles.DeletionMode.ALWAYS
-import de.joshuagleitze.test.spek.testfiles.DeletionMode.IF_SUCCESSFUL
-import de.joshuagleitze.test.spek.testfiles.DeletionMode.NEVER
+import ch.tutteli.atrium.creating.Expect
+import de.joshuagleitze.testfiles.DefaultTestFiles.Companion.determineTestFilesRootDirectory
+import de.joshuagleitze.testfiles.DefaultTestFiles.TestResult.FAILURE
+import de.joshuagleitze.testfiles.DefaultTestFiles.TestResult.SUCCESS
+import de.joshuagleitze.testfiles.DefaultTestFilesSpec.content
+import de.joshuagleitze.testfiles.DeletionMode.ALWAYS
+import de.joshuagleitze.testfiles.DeletionMode.IF_SUCCESSFUL
+import de.joshuagleitze.testfiles.DeletionMode.NEVER
 import org.spekframework.spek2.Spek
-import org.spekframework.spek2.lifecycle.ExecutionResult.Failure
-import org.spekframework.spek2.lifecycle.ExecutionResult.Success
-import org.spekframework.spek2.runtime.scope.GroupScopeImpl
-import org.spekframework.spek2.runtime.scope.TestScopeImpl
 import org.spekframework.spek2.style.specification.describe
-import java.nio.file.Files.createDirectories
-import java.nio.file.Files.createDirectory
-import java.nio.file.Files.createFile
 import java.nio.file.Files.delete
+import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createDirectory
+import kotlin.io.path.createFile
+import kotlin.io.path.div
+import kotlin.io.path.readText
 
 object DefaultTestFilesSpec: Spek({
-    val fileRoot = freezeFileRoot()
-    lateinit var testFiles: DefaultTestFiles
-
-    beforeEachTest {
-        testFiles = DefaultTestFiles()
-    }
-
-    describe("DefaultTestFiles") {
-        describe("root folder") {
-            beforeEachTest { deletePotentialTargetDirectories() }
-
-            it("uses the build directory if present") {
-                createDirectories(buildDir)
-                createDirectories(targetDir)
-                createDirectories(testOutputsDir)
-                expect(determineTestFilesRootDirectory()).toBe(buildDir.resolve("test-outputs"))
-            }
-
-            it("uses the target directory if present") {
-                createDirectories(targetDir)
-                createDirectories(testOutputsDir)
-                expect(determineTestFilesRootDirectory()).toBe(targetDir.resolve("test-outputs"))
-            }
-
-            it("uses the test-outputs directory if present") {
-                createDirectories(testOutputsDir)
-                expect(determineTestFilesRootDirectory()).toBe(testOutputsDir)
-            }
-
-            it("falls back to the tmpdir") {
-                expect(determineTestFilesRootDirectory()).toBe(tmpDir.resolve("spek-test-outputs"))
-            }
-        }
-
-        describe("housekeeping") {
-            it("clears pre-existing files when entering a group") {
-                val mockGroup = mockScope<GroupScopeImpl>("delete pre-existing group")
-
-                val scopeDir = createDirectories(fileRoot.resolve("[delete pre-existing group]"))
-                val testDir = createDirectory(scopeDir.resolve("pre-existing dir"))
-                val subTestFile = createFile(testDir.resolve("sub"))
-                val testFile = createFile(scopeDir.resolve("pre-existing file"))
-
-                testFiles.beforeExecuteGroup(mockGroup)
-
-                expect(testDir).existsNot()
-                expect(subTestFile).existsNot()
-                expect(testFile).existsNot()
-
-                testFiles.afterExecuteGroup(mockGroup, Success)
-            }
-
-            it("clears pre-existing files when entering a test") {
-                val mockTest = mockScope<TestScopeImpl>("delete pre-existing test")
-
-                val scopeDir = createDirectories(fileRoot.resolve("[delete pre-existing test]"))
-                val testDir = createDirectory(scopeDir.resolve("pre-existing dir"))
-                val subTestFile = createFile(testDir.resolve("deeper pre-existing file"))
-                val testFile = createFile(scopeDir.resolve("pre-existing file"))
-
-                testFiles.beforeExecuteTest(mockTest)
-
-                expect(testDir).existsNot()
-                expect(subTestFile).existsNot()
-                expect(testFile).existsNot()
-
-                testFiles.afterExecuteTest(mockTest, Success)
-            }
-
-            it("retains existing group directories when entering a group") {
-                val mockGroup = mockScope<GroupScopeImpl>("retain pre-existing group")
-
-                val scopeDir = createDirectories(fileRoot.resolve("[retain pre-existing group]"))
-                val groupTestDir = createDirectory(scopeDir.resolve("[test]"))
-                val subTestFile = createFile(groupTestDir.resolve("deeper pre-existing file"))
-                val testFile = createFile(scopeDir.resolve("pre-existing file"))
-
-                testFiles.beforeExecuteGroup(mockGroup)
-
-                expect(scopeDir).isDirectory()
-                expect(groupTestDir).isDirectory()
-                expect(subTestFile).isRegularFile()
-                expect(testFile).existsNot()
-
-                testFiles.afterExecuteGroup(mockGroup, Success)
-            }
-
-            it("retains existing group directories when entering a test") {
-                val mockTest = mockScope<TestScopeImpl>("retain pre-existing test")
-
-                val scopeDir = createDirectories(fileRoot.resolve("[retain pre-existing test]"))
-                val groupTestDir = createDirectory(scopeDir.resolve("[test]"))
-                val subTestFile = createFile(groupTestDir.resolve("deeper pre-existing file"))
-                val testFile = createFile(scopeDir.resolve("pre-existing file"))
-
-                testFiles.beforeExecuteTest(mockTest)
-
-                expect(scopeDir).isDirectory()
-                expect(groupTestDir).isDirectory()
-                expect(subTestFile).isRegularFile()
-                expect(testFile).existsNot()
-
-                testFiles.afterExecuteTest(mockTest, Success)
-            }
-
-            it("does not create a group or test folder if not necessary") {
-                val mockGroup = mockScope<GroupScopeImpl>("no premature creation group")
-                val mockGroupTarget = fileRoot.resolve("[no premature creation group]")
-                val mockSubGroup = mockScope<GroupScopeImpl>("sub")
-                val mockSubGroupTarget = mockGroupTarget.resolve("[sub]")
-                val mockTest = mockScope<TestScopeImpl>("test")
-                val mockTestTarget = mockSubGroupTarget.resolve("[test]")
-
-                testFiles.beforeExecuteGroup(mockGroup)
-                expect(mockGroupTarget).existsNot()
-
-                testFiles.beforeExecuteGroup(mockSubGroup)
-                expect(mockGroupTarget).existsNot()
-                expect(mockSubGroupTarget).existsNot()
-
-                testFiles.beforeExecuteTest(mockTest)
-                expect(mockGroupTarget).existsNot()
-                expect(mockSubGroupTarget).existsNot()
-                expect(mockTestTarget).existsNot()
-
-                testFiles.createFile()
-                expect(mockTestTarget).exists()
-            }
-        }
-
-        describe("file name checks") {
-            it("rejects file names that match the group directory pattern") {
-                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("rejects bad file names"))
-
-                expect { testFiles.createFile("[test") }.notToThrow()
-                expect { testFiles.createFile("test]") }.notToThrow()
-                expect { testFiles.createFile("[test]") }.toThrow<IllegalArgumentException> {
-                    messageContains("[test]")
-                }
-            }
-
-            it("rejects directory names that match the group directory pattern") {
-                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("rejects bad directory names"))
-
-                expect { testFiles.createDirectory("[test") }.notToThrow()
-                expect { testFiles.createDirectory("test]") }.notToThrow()
-                expect { testFiles.createDirectory("[test]") }.toThrow<IllegalArgumentException> {
-                    messageContains("[test]")
-                }
-            }
-
-            listOf('/', '\\', '<', '>', ':', '\"', '|', '?', '*', '\u0000').forEach { badCharacter ->
-                listOf(
-                    "group" to { name: String -> testFiles.beforeExecuteGroup(mockScope<GroupScopeImpl>(name)) },
-                    "test" to { name: String -> testFiles.beforeExecuteTest(mockScope<TestScopeImpl>(name)) }
-                ).forEach { (scopeType, enterScope) ->
-                    it("escapes '$badCharacter' in a $scopeType name if necessary") {
-                        enterScope("test with -$badCharacter- in it")
-
-                        expect { testFiles.createFile("test") }.notToThrow {
-                            // check that / \ is not messing up the directory structure
-                            parent.fileName.matches(Regex(".test with -.- in it."))
-                        }
-                    }
-                }
-            }
-        }
-
-        describe("file creation") {
-            it("creates an empty file with the provided name") {
-                val mockGroup = mockScope<GroupScopeImpl>("named file creation group")
-                val mockGroupTarget = fileRoot.resolve("[named file creation group]")
-                val mockTest = mockScope<TestScopeImpl>("test")
-                val mockTestTarget = mockGroupTarget.resolve("[test]")
-
-                testFiles.beforeExecuteGroup(mockGroup)
-                expect(testFiles.createFile("testfile")) {
-                    isRegularFile()
-                    isReadable()
-                    isWritable()
-                    content.toBe("")
-                    fileName.toBe("testfile")
-                    parent.toBe(mockGroupTarget)
-                }
-
-                testFiles.beforeExecuteTest(mockTest)
-                expect(testFiles.createFile("testfile")) {
-                    isRegularFile()
-                    isReadable()
-                    isWritable()
-                    content.toBe("")
-                    fileName.toBe("testfile")
-                    parent.toBe(mockTestTarget)
-                }
-            }
-
-            it("creates an empty directory with the provided name") {
-                val mockGroup = mockScope<GroupScopeImpl>("named directory creation group")
-                val mockGroupTarget = fileRoot.resolve("[named directory creation group]")
-                val mockTest = mockScope<TestScopeImpl>("test")
-                val mockTestTarget = mockGroupTarget.resolve("[test]")
-
-                testFiles.beforeExecuteGroup(mockGroup)
-                expect(testFiles.createDirectory("testdir")) {
-                    isDirectory()
-                    isReadable()
-                    isWritable()
-                    fileName.toBe("testdir")
-                    parent.toBe(mockGroupTarget)
-                }
-
-                testFiles.beforeExecuteTest(mockTest)
-                expect(testFiles.createDirectory("testdir")) {
-                    isDirectory()
-                    isReadable()
-                    isWritable()
-                    fileName.toBe("testdir")
-                    parent.toBe(mockTestTarget)
-                }
-            }
-
-            it("hands out absolute paths") {
-                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("hands out absolute paths"))
-
-                expect(testFiles.createFile("testFile")).feature("isAbsolute") { isAbsolute }.toBe(true)
-                expect(testFiles.createDirectory("testDir")).feature("isAbsolute") { isAbsolute }.toBe(true)
-            }
-
-            it("creates an empty file with a generated name") {
-                val mockGroup = mockScope<GroupScopeImpl>("unnamed file creation group")
-                val mockGroupTarget = fileRoot.resolve("[unnamed file creation group]")
-                val mockTest = mockScope<TestScopeImpl>("test")
-                val mockTestTarget = mockGroupTarget.resolve("[test]")
-
-                testFiles.beforeExecuteGroup(mockGroup)
-                expect(testFiles.createFile()) {
-                    isRegularFile()
-                    isReadable()
-                    isWritable()
-                    content.toBe("")
-                    fileName.startsWith("test-")
-                    parent.toBe(mockGroupTarget)
-                }
-
-                testFiles.beforeExecuteTest(mockTest)
-                expect(testFiles.createFile()) {
-                    isRegularFile()
-                    isReadable()
-                    isWritable()
-                    content.toBe("")
-                    fileName.startsWith("test-")
-                    parent.toBe(mockTestTarget)
-                }
-            }
-
-            it("creates an empty directory with a generated name") {
-                val mockGroup = mockScope<GroupScopeImpl>("unnamed directory creation group")
-                val mockGroupTarget = fileRoot.resolve("[unnamed directory creation group]")
-                val mockTest = mockScope<TestScopeImpl>("test")
-                val mockTestTarget = mockGroupTarget.resolve("[test]")
-
-                testFiles.beforeExecuteGroup(mockGroup)
-                expect(testFiles.createDirectory()) {
-                    isDirectory()
-                    isReadable()
-                    isWritable()
-                    fileName.startsWith("test-")
-                    parent.toBe(mockGroupTarget)
-                }
-
-                testFiles.beforeExecuteTest(mockTest)
-                expect(testFiles.createDirectory()) {
-                    isDirectory()
-                    isReadable()
-                    isWritable()
-                    fileName.startsWith("test-")
-                    parent.toBe(mockTestTarget)
-                }
-            }
-
-            it("generates different file names on subsequent creations") {
-                testFiles.beforeExecuteTest(mockScope<TestScopeImpl>("different file names"))
-
-                expect(testFiles.createFile()).notToBe(testFiles.createFile())
-                expect(testFiles.createDirectory()).notToBe(testFiles.createDirectory())
-            }
-
-            it("generates the same file names for the same creations") {
-                val mockTest = mockScope<TestScopeImpl>("consistent file names")
-
-                testFiles.beforeExecuteTest(mockTest)
-                val firstFile = testFiles.createFile()
-                testFiles.afterExecuteTest(mockTest, Success)
-
-                testFiles.beforeExecuteTest(mockTest)
-                val secondFile = testFiles.createFile()
-                testFiles.afterExecuteTest(mockTest, Success)
-
-                expect(firstFile).toBe(secondFile)
-            }
-        }
-
-        describe("file cleanup") {
-            it("deletes a file that has been marked to be deleted ALWAYS") {
-                val mockTest = mockScope<TestScopeImpl>("delete ALWAYS")
-
-                testFiles.beforeExecuteTest(mockTest)
-                val successTestfile = testFiles.createFile(delete = ALWAYS)
-                val successTestdir = testFiles.createDirectory(delete = ALWAYS)
-                expect(successTestfile).exists()
-                expect(successTestdir).exists()
-                testFiles.afterExecuteTest(mockTest, Success)
-                expect(successTestfile).existsNot()
-                expect(successTestdir).existsNot()
-
-                testFiles.beforeExecuteTest(mockTest)
-                val failureTestfile = testFiles.createFile(delete = ALWAYS)
-                val failureTestdir = testFiles.createDirectory(delete = ALWAYS)
-                expect(failureTestfile).exists()
-                expect(failureTestdir).exists()
-                testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
-                expect(failureTestfile).existsNot()
-                expect(failureTestdir).existsNot()
-            }
-
-            it("deletes a file that has been marked to be deleted IF_SUCCESSFUL only if a test was successful") {
-                val mockTest = mockScope<TestScopeImpl>("delete IF_SUCCESSFUL")
-
-                testFiles.beforeExecuteTest(mockTest)
-                val successTestfile = testFiles.createFile(delete = IF_SUCCESSFUL)
-                val successTestdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
-                expect(successTestfile).exists()
-                expect(successTestdir).exists()
-                testFiles.afterExecuteTest(mockTest, Success)
-                expect(successTestfile).existsNot()
-                expect(successTestdir).existsNot()
-
-
-                testFiles.beforeExecuteTest(mockTest)
-                val failureTestfile = testFiles.createFile(delete = IF_SUCCESSFUL)
-                val failureTestdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
-                expect(failureTestfile).exists()
-                expect(failureTestdir).exists()
-                testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
-                expect(failureTestfile).exists()
-                expect(failureTestdir).exists()
-            }
-
-            it("does not delete a group file that has been marked to be deleted IF_SUCCESSFUL if a test in the group failed") {
-                val mockGroup = mockScope<GroupScopeImpl>("delete IF_SUCCESSFUL group")
-                val mockTest = mockScope<TestScopeImpl>("delete IF_SUCCESSFUL test")
-
-                testFiles.beforeExecuteGroup(mockGroup)
-                val successGroupTestfile = testFiles.createFile(delete = IF_SUCCESSFUL)
-                val successGroupTestdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
-
-                testFiles.beforeExecuteTest(mockTest)
-                val successTestTestfile = testFiles.createFile(delete = IF_SUCCESSFUL)
-                val successTestTestdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
-
-                val ifSuccessFiles = listOf(successGroupTestfile, successGroupTestdir, successTestTestfile, successTestTestdir)
-                ifSuccessFiles.forEach { expect(it).exists() }
-
-                testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
-                ifSuccessFiles.forEach { expect(it).exists() }
-
-                testFiles.afterExecuteGroup(mockGroup, Success)
-                ifSuccessFiles.forEach { expect(it).exists() }
-            }
-
-            it("does not delete a file that has been marked to be deleted NEVER") {
-                val mockTest = mockScope<TestScopeImpl>("delete NEVER")
-
-                testFiles.beforeExecuteTest(mockTest)
-                val successTestfile = testFiles.createFile(delete = NEVER)
-                val successTestdir = testFiles.createDirectory(delete = NEVER)
-                expect(successTestfile).exists()
-                expect(successTestdir).exists()
-                testFiles.afterExecuteTest(mockTest, Success)
-                expect(successTestfile).exists()
-                expect(successTestdir).exists()
-
-                testFiles.beforeExecuteTest(mockTest)
-                val failureTestfile = testFiles.createFile(delete = NEVER)
-                val failureTestdir = testFiles.createDirectory(delete = NEVER)
-                expect(failureTestfile).exists()
-                expect(failureTestdir).exists()
-                testFiles.afterExecuteTest(mockTest, Failure(IllegalStateException()))
-                expect(failureTestfile).exists()
-                expect(failureTestdir).exists()
-            }
-
-            it("tolerates deletion of created files") {
-                val mockTest = mockScope<TestScopeImpl>("deletion toleration")
-
-                testFiles.beforeExecuteTest(mockTest)
-                delete(testFiles.createFile(delete = ALWAYS))
-                delete(testFiles.createDirectory(delete = ALWAYS))
-
-                expect {
-                    testFiles.afterExecuteTest(mockTest, Success)
-                }.notToThrow()
-            }
-        }
-    }
-})
+	val fileRoot = freezeFileRoot()
+	lateinit var testFiles: DefaultTestFiles
+
+	beforeEachTest {
+		testFiles = DefaultTestFiles()
+	}
+
+	describe("DefaultTestFiles") {
+		describe("root folder") {
+			beforeEachTest { deletePotentialTargetDirectories() }
+
+			it("uses the build directory if present") {
+				buildDir.createDirectories()
+				targetDir.createDirectories()
+				testOutputsDir.createDirectories()
+				expect(determineTestFilesRootDirectory()).toBe(buildDir / "test-outputs")
+			}
+
+			it("uses the target directory if present") {
+				targetDir.createDirectories()
+				testOutputsDir.createDirectories()
+				expect(determineTestFilesRootDirectory()).toBe(targetDir / "test-outputs")
+			}
+
+			it("uses the test-outputs directory if present") {
+				testOutputsDir.createDirectories()
+				expect(determineTestFilesRootDirectory()).toBe(testOutputsDir)
+			}
+
+			it("falls back to the tmpdir") {
+				expect(determineTestFilesRootDirectory()).toBe(tmpDir / "test-outputs")
+			}
+		}
+
+		describe("housekeeping") {
+			it("clears pre-existing files when entering a scope") {
+				val scopeDir = (fileRoot / "[delete pre-existing group]").createDirectories()
+				val testDir = (scopeDir / "pre-existing dir").createDirectory()
+				val subTestFile = (testDir / "sub").createFile()
+				val testFile = (scopeDir / "pre-existing file").createFile()
+
+				testFiles.enterScope("delete pre-existing group")
+
+				expect(testDir).existsNot()
+				expect(subTestFile).existsNot()
+				expect(testFile).existsNot()
+			}
+
+			it("retains existing scope directories when entering a scope") {
+				val scopeDir = (fileRoot / "[retain pre-existing group]").createDirectories()
+				val groupTestDir = (scopeDir / "[test]").createDirectory()
+				val subTestFile = (groupTestDir / "deeper pre-existing file").createFile()
+				val testFile = (scopeDir / "pre-existing file").createFile()
+
+				testFiles.enterScope("retain pre-existing group")
+
+				expect(scopeDir).isDirectory()
+				expect(groupTestDir).isDirectory()
+				expect(subTestFile).isRegularFile()
+				expect(testFile).existsNot()
+			}
+
+			it("does not create a scope folder if not necessary") {
+				val outerScopeTarget = fileRoot / "[no premature creation]"
+				val innerScopeTarget = outerScopeTarget / "[sub]"
+
+				testFiles.enterScope("no premature creation")
+				expect(outerScopeTarget).existsNot()
+
+				testFiles.enterScope("sub")
+				expect(outerScopeTarget).existsNot()
+				expect(innerScopeTarget).existsNot()
+
+				testFiles.createFile()
+				expect(innerScopeTarget).exists()
+			}
+		}
+
+		describe("file name checks") {
+			it("rejects file names that match the group directory pattern") {
+				testFiles.enterScope("rejects bad file names")
+
+				expect { testFiles.createFile("[test") }.notToThrow()
+				expect { testFiles.createFile("test]") }.notToThrow()
+				expect { testFiles.createFile("[test]") }.toThrow<IllegalArgumentException> {
+					messageContains("[test]")
+				}
+			}
+
+			it("rejects directory names that match the group directory pattern") {
+				testFiles.enterScope("rejects bad directory names")
+
+				expect { testFiles.createDirectory("[test") }.notToThrow()
+				expect { testFiles.createDirectory("test]") }.notToThrow()
+				expect { testFiles.createDirectory("[test]") }.toThrow<IllegalArgumentException> {
+					messageContains("[test]")
+				}
+			}
+
+			listOf('/', '\\', '<', '>', ':', '\"', '|', '?', '*', '\u0000').forEach { badCharacter ->
+				it("escapes '$badCharacter' in a scope name if necessary") {
+					testFiles.enterScope("test with -$badCharacter- in it")
+
+					expect { testFiles.createFile("test") }.notToThrow()
+						// check that / \ is not messing up the directory structure
+						.and.parent.fileName.matches(Regex(".test with -.- in it."))
+				}
+			}
+		}
+	}
+
+	describe("file creation") {
+		it("creates an empty file with the provided name") {
+			testFiles.enterScope("named file creation")
+			expect(testFiles.createFile("testfile")) {
+				isRegularFile()
+				isReadable()
+				isWritable()
+				content.toBe("")
+				fileName.toBe("testfile")
+				parent.toBe(fileRoot / "[named file creation]")
+			}
+
+			testFiles.enterScope("inner")
+			expect(testFiles.createFile("testfile")) {
+				isRegularFile()
+				isReadable()
+				isWritable()
+				content.toBe("")
+				fileName.toBe("testfile")
+				parent.toBe(fileRoot / "[named file creation]" / "[inner]")
+			}
+		}
+
+		it("creates an empty directory with the provided name") {
+			testFiles.enterScope("named directory creation")
+			expect(testFiles.createDirectory("testdir")) {
+				isDirectory()
+				isReadable()
+				isWritable()
+				fileName.toBe("testdir")
+				parent.toBe(fileRoot / "[named directory creation]")
+			}
+
+			testFiles.enterScope("inner")
+			expect(testFiles.createDirectory("testdir")) {
+				isDirectory()
+				isReadable()
+				isWritable()
+				fileName.toBe("testdir")
+				parent.toBe(fileRoot / "[named directory creation]" / "[inner]")
+			}
+		}
+
+		it("hands out absolute paths") {
+			testFiles.enterScope("hands out absolute paths")
+
+			expect(testFiles.createFile("testFile")).isAbsolute()
+			expect(testFiles.createDirectory("testDir")).isAbsolute()
+		}
+
+		it("creates an empty file with a generated name") {
+			testFiles.enterScope("unnamed file creation")
+			expect(testFiles.createFile()) {
+				isRegularFile()
+				isReadable()
+				isWritable()
+				content.toBe("")
+				fileName.startsWith("test-")
+				parent.toBe(fileRoot / "[unnamed file creation]")
+			}
+
+			testFiles.enterScope("inner")
+			expect(testFiles.createFile()) {
+				isRegularFile()
+				isReadable()
+				isWritable()
+				content.toBe("")
+				fileName.startsWith("test-")
+				parent.toBe(fileRoot / "[unnamed file creation]" / "[inner]")
+			}
+		}
+
+		it("creates an empty directory with a generated name") {
+			testFiles.enterScope("unnamed directory creation")
+			expect(testFiles.createDirectory()) {
+				isDirectory()
+				isReadable()
+				isWritable()
+				fileName.startsWith("test-")
+				parent.toBe(fileRoot / "[unnamed directory creation]")
+			}
+
+			testFiles.enterScope("inner")
+			expect(testFiles.createDirectory()) {
+				isDirectory()
+				isReadable()
+				isWritable()
+				fileName.startsWith("test-")
+				parent.toBe(fileRoot / "[unnamed directory creation]" / "[inner]")
+			}
+		}
+
+		it("generates different file names on subsequent creations") {
+			testFiles.enterScope("different file names")
+
+			expect(testFiles.createFile()).notToBe(testFiles.createFile())
+			expect(testFiles.createDirectory()).notToBe(testFiles.createDirectory())
+		}
+
+		it("generates the same file names for the same creations") {
+			testFiles.enterScope("consistency")
+			val firstFileFirstTime = testFiles.createFile()
+			val secondFileFirstTime = testFiles.createFile()
+			val thirdFileFirstTime = testFiles.createFile()
+			testFiles.leaveScope(SUCCESS)
+
+			testFiles.enterScope("consistency")
+			val firstFileSecondTime = testFiles.createFile()
+			val secondFileSecondTime = testFiles.createFile()
+			val thirdFileSecondTime = testFiles.createFile()
+			testFiles.leaveScope(SUCCESS)
+
+			expect(firstFileFirstTime).toBe(firstFileSecondTime)
+			expect(secondFileFirstTime).toBe(secondFileSecondTime)
+			expect(thirdFileFirstTime).toBe(thirdFileSecondTime)
+		}
+	}
+
+	describe("file cleanup") {
+		listOf(
+			ALWAYS to SUCCESS,
+			ALWAYS to FAILURE,
+			IF_SUCCESSFUL to SUCCESS
+		).forEach { (deletionMode, result) ->
+			it("deletes a file that has been marked to be deleted $deletionMode after $result") {
+				testFiles.enterScope("delete after $result")
+				val testfile = testFiles.createFile(delete = deletionMode)
+				val testdir = testFiles.createDirectory(delete = deletionMode)
+				expect(testfile).exists()
+				expect(testdir).exists()
+
+				testFiles.leaveScope(result)
+				expect(testfile).existsNot()
+				expect(testdir).existsNot()
+			}
+		}
+
+		listOf(
+			IF_SUCCESSFUL to FAILURE,
+			NEVER to SUCCESS,
+			NEVER to FAILURE
+		).forEach { (deletionMode, result) ->
+			it("retains a file that has been marked to be deleted $deletionMode after $result") {
+				testFiles.enterScope("retain after $result")
+				val testfile = testFiles.createFile(delete = deletionMode)
+				val testdir = testFiles.createDirectory(delete = deletionMode)
+				expect(testfile).exists()
+				expect(testdir).exists()
+
+				testFiles.leaveScope(result)
+				expect(testfile).exists()
+				expect(testdir).exists()
+			}
+		}
+
+		it("retains a file that has been marked to be deleted IF_SUCCESSFUL if only one inner scope reported FAILURE") {
+			testFiles.enterScope("outer")
+			val testfile = testFiles.createFile(delete = IF_SUCCESSFUL)
+			val testdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
+
+			testFiles.enterScope("first inner (successful)")
+			testFiles.createFile(delete = IF_SUCCESSFUL)
+			testFiles.leaveScope(SUCCESS)
+
+			testFiles.enterScope("second inner (failing)")
+			testFiles.createFile(delete = IF_SUCCESSFUL)
+			testFiles.leaveScope(FAILURE)
+
+			testFiles.enterScope("third inner (successful)")
+			testFiles.createFile(delete = IF_SUCCESSFUL)
+			testFiles.leaveScope(SUCCESS)
+
+			testFiles.leaveScope(SUCCESS)
+
+			expect(testfile).exists()
+			expect(testdir).exists()
+		}
+
+		it("tolerates deletion of created files") {
+			testFiles.enterScope("tolerate deletion")
+			delete(testFiles.createFile(delete = ALWAYS))
+			delete(testFiles.createDirectory(delete = ALWAYS))
+
+			expect {
+				testFiles.leaveScope(SUCCESS)
+			}.notToThrow()
+		}
+	}
+}) {
+	val Expect<Path>.content get() = feature("content") { readText() }
+}
