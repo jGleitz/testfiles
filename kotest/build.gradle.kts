@@ -14,6 +14,10 @@ java {
 	targetCompatibility = VERSION_1_8
 }
 
+kotlin {
+	explicitApi()
+}
+
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		jvmTarget = "1.8"

@@ -1,6 +1,6 @@
-package de.joshuagleitze.test.spek.testfiles
+package de.joshuagleitze.testfiles
 
-enum class DeletionMode {
+public enum class DeletionMode {
 	/**
 	 * Always delete the created file after the test has run.
 	 */
