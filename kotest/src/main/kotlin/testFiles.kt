@@ -8,6 +8,6 @@ internal val internalTestFiles: DefaultTestFiles = DefaultTestFiles()
 /**
  * A [TestFiles] instance that will use the structure of the Kotest specs in this project when creating files.
  *
- * @sample de.joshuagleitze.testfiles.kotest.samples.ExampleSpek
+ * @sample de.joshuagleitze.testfiles.kotest.samples.ExampleSpec
  */
 public val testFiles: TestFiles get() = internalTestFiles

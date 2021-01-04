@@ -10,6 +10,6 @@ import org.spekframework.spek2.dsl.Root
  * This function _must_ be called from the root of a Spek before any test is created. That means, for example, that it _must not_ be called
  * from the initializer of a `memoized` value. The returned instance should be used throughout the Spek.
  *
- * @sample de.joshuagleitze.testfiles.spek.samples.ExampleSpek
+ * @sample de.joshuagleitze.testfiles.spek.samples.ExampleSpec
  */
 public fun Root.testFiles(): TestFiles = DefaultTestFiles().also { registerListener(SpekTestFilesAdapter(it)) }

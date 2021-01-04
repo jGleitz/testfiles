@@ -6,7 +6,7 @@ import de.joshuagleitze.testfiles.DeletionMode.Never
 import de.joshuagleitze.testfiles.kotest.testFiles
 import io.kotest.core.spec.style.DescribeSpec
 
-class ExampleSpek: DescribeSpec({
+class ExampleSpec: DescribeSpec({
 	describe("using test files") {
 		it("generates file names") {
 			testFiles.createFile()
