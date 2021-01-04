@@ -25,7 +25,7 @@
         <div id="leftToggler"><span class="icon-toggler"></span></div>
         <script type="text/javascript" src="../../scripts/pages.js"></script>
         <script type="text/javascript" src="../../scripts/main.js"></script>
-        <div class="main-content" id="content" pageIds="de.joshuagleitze.testfiles.spek//testFiles/org.spekframework.spek2.dsl.Root#/PointingToDeclaration//510602768">
+        <div class="main-content" id="content" pageIds="de.joshuagleitze.testfiles.spek//testFiles/org.spekframework.spek2.dsl.Root#/PointingToDeclaration//1107106168">
           <div class="navigation-wrapper" id="navigation-wrapper">
             <div class="breadcrumbs"><a href="../index.html">testfiles</a>/<a href="index.html">de.joshuagleitze.testfiles.spek</a>/<a href="test-files.html">testFiles</a></div>
             <div class="pull-right d-flex">
@@ -40,37 +40,12 @@
   <div>
     <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":spek:dokkaHtml/main"><div class="symbol monospace">fun <span data-unresolved-link="org.spekframework.spek2.dsl/Root///PointingToDeclaration/">Root</span>.<a href="test-files.html">testFiles</a>(): <a href="../de.joshuagleitze.testfiles/-test-files/index.html">TestFiles</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
   </div>
-<p class="paragraph">Creates a <a href="../de.joshuagleitze.testfiles/-test-files/index.html">TestFiles</a> instance that will listen to <code>this</code><span data-unresolved-link="org.spekframework.spek2.dsl/Root///PointingToDeclaration/">Root</span> to capture the structure of the tests.</p><p class="paragraph">This function must be called from the root of a Spek before any test is created. That means, for example, that it must not be called from the initializer of a <code>memoized</code> value. The returned instance should be used throughout the Spek.</p><h2 class="">Samples</h2><div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Samples"><div class="content sourceset-depenent-content" data-active="" data-togglable=":spek:dokkaHtml/main"><div class="sample-container"><code class="runnablesample monospace" theme="idea"><pre>import de.joshuagleitze.testfiles.DeletionMode.Always
-import de.joshuagleitze.testfiles.DeletionMode.IfSuccessful
-import de.joshuagleitze.testfiles.DeletionMode.Never
-import de.joshuagleitze.testfiles.spek.testFiles
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-fun main() { 
-   //sampleStart 
-   object ExampleSpek: Spek({
-	val testFiles = testFiles()
-
-	describe(&quot;using test files&quot;) {
-		it(&quot;generates file names&quot;) {
-			testFiles.createFile()
-			testFiles.createDirectory()
-		}
-
-		it(&quot;cleans up files&quot;) {
-			testFiles.createFile(&quot;irrelevant&quot;, delete = Always)
-			testFiles.createFile(&quot;default mode&quot;, delete = IfSuccessful)
-			testFiles.createFile(&quot;output&quot;, delete = Never)
-		}
-	}
-}) 
-   //sampleEnd
-}</pre></code></div></div></div></div>
+<p class="paragraph">Creates a <a href="../de.joshuagleitze.testfiles/-test-files/index.html">TestFiles</a> instance that will listen to <code>this</code><span data-unresolved-link="org.spekframework.spek2.dsl/Root///PointingToDeclaration/">Root</span> to capture the structure of the tests.</p><p class="paragraph">This function must be called from the root of a Spek before any test is created. That means, for example, that it must not be called from the initializer of a <code>memoized</code> value. The returned instance should be used throughout the Spek.</p><h2 class="">Samples</h2><div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Samples"><div class="content sourceset-depenent-content" data-active="" data-togglable=":spek:dokkaHtml/main">de.joshuagleitze.testfiles.spek.samples.ExampleSpec</div></div></div>
           <h2 class="">Sources</h2>
-          <div class="table" data-togglable="Sources"><a data-name="%5Bde.joshuagleitze.testfiles.spek%2F%2FtestFiles%2Forg.spekframework.spek2.dsl.Root%23%2FPointingToDeclaration%2F%5D%2FSource%2F510602768" anchor-label="https://github.com/jGleitz/testfiles/blob/v2.0.0/spek/src/main/kotlin/testFiles.kt#L7" id="%5Bde.joshuagleitze.testfiles.spek%2F%2FtestFiles%2Forg.spekframework.spek2.dsl.Root%23%2FPointingToDeclaration%2F%5D%2FSource%2F510602768" data-filterable-set=":spek:dokkaHtml/main"></a>
+          <div class="table" data-togglable="Sources"><a data-name="%5Bde.joshuagleitze.testfiles.spek%2F%2FtestFiles%2Forg.spekframework.spek2.dsl.Root%23%2FPointingToDeclaration%2F%5D%2FSource%2F1107106168" anchor-label="https://github.com/jGleitz/testfiles/blob/v2.0.0/spek/src/main/kotlin/testFiles.kt#L7" id="%5Bde.joshuagleitze.testfiles.spek%2F%2FtestFiles%2Forg.spekframework.spek2.dsl.Root%23%2FPointingToDeclaration%2F%5D%2FSource%2F1107106168" data-filterable-set=":spek:dokkaHtml/main"></a>
             <div class="table-row" data-filterable-current=":spek:dokkaHtml/main" data-filterable-set=":spek:dokkaHtml/main">
               <div class="main-subrow keyValue ">
-                <div class=""><span class="inline-flex"><a href="https://github.com/jGleitz/testfiles/blob/v2.0.0/spek/src/main/kotlin/testFiles.kt#L7">(source)</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bde.joshuagleitze.testfiles.spek%2F%2FtestFiles%2Forg.spekframework.spek2.dsl.Root%23%2FPointingToDeclaration%2F%5D%2FSource%2F510602768"></span>
+                <div class=""><span class="inline-flex"><a href="https://github.com/jGleitz/testfiles/blob/v2.0.0/spek/src/main/kotlin/testFiles.kt#L7">(source)</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bde.joshuagleitze.testfiles.spek%2F%2FtestFiles%2Forg.spekframework.spek2.dsl.Root%23%2FPointingToDeclaration%2F%5D%2FSource%2F1107106168"></span>
                       <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                     </span></span></div>
                 <div></div>
