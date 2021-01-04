@@ -9,6 +9,7 @@ plugins {
 }
 
 val artifactId by extra("kotest-files")
+val description by extra("Manage test files and directories neatly when testing with Kotest!")
 
 dependencies {
 	val kotestVersion = "4.3.2"
