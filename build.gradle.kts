@@ -1,4 +1,3 @@
-import de.marcphilipp.gradle.nexus.NexusRepository
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
@@ -134,31 +133,32 @@ subprojects {
 			}
 		}
 	}
-}
 
-val githubPackages = publishing.repositories.maven("https://maven.pkg.github.com/$githubRepository") {
-	name = "GitHubPackages"
-	credentials {
-		username = githubOwner
-		password = githubToken
+	val githubPackages = publishing.repositories.maven("https://maven.pkg.github.com/$githubRepository") {
+		name = "GitHubPackages"
+		credentials {
+			username = githubOwner
+			password = githubToken
+		}
 	}
-}
 
-val mavenCentral = nexusPublishing.repositories.sonatype {
-	username.set(ossrhUsername)
-	password.set(ossrhPassword)
-}
+	val mavenCentral = nexusPublishing.repositories.sonatype {
+		username.set(ossrhUsername)
+		password.set(ossrhPassword)
+	}
 
-closeAndReleaseRepository.mustRunAfter(mavenCentral.publishTask)
+	val publishToGithub = tasks.named("publishAllPublicationsTo${githubPackages.name.capitalize()}Repository")
+	val publishToMavenCentral = tasks.named("publishTo${mavenCentral.name.capitalize()}")
 
-tasks.register("release") {
-	group = "release"
-	description = "Releases the project to all remote repositories"
-	dependsOn(githubPackages.publishTask, mavenCentral.publishTask, closeAndReleaseRepository)
+	tasks.register("release") {
+		group = "release"
+		description = "Releases the project to all remote repositories"
+		dependsOn(publishToGithub, publishToMavenCentral, rootProject.tasks.closeAndReleaseRepository)
+	}
+
+	rootProject.tasks.closeAndReleaseRepository { mustRunAfter(publishToMavenCentral) }
 }
 
 val Project.isSnapshot get() = versionDetails.commitDistance != 0
 fun String.drop(prefix: String) = if (this.startsWith(prefix)) this.drop(prefix.length) else this
 val Project.versionDetails get() = (this.extra["versionDetails"] as groovy.lang.Closure<*>)() as com.palantir.gradle.gitversion.VersionDetails
-val ArtifactRepository.publishTask get() = tasks["publishAllPublicationsTo${this.name}Repository"]
-val NexusRepository.publishTask get() = tasks["publishTo${this.name.capitalize()}"]
