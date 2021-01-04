@@ -1,11 +1,7 @@
 package de.joshuagleitze.testfiles.spek
 
 import de.joshuagleitze.testfiles.DefaultTestFiles
-import de.joshuagleitze.testfiles.DefaultTestFiles.TestResult.FAILURE
-import de.joshuagleitze.testfiles.DefaultTestFiles.TestResult.SUCCESS
 import org.spekframework.spek2.lifecycle.ExecutionResult
-import org.spekframework.spek2.lifecycle.ExecutionResult.Failure
-import org.spekframework.spek2.lifecycle.ExecutionResult.Success
 import org.spekframework.spek2.lifecycle.GroupScope
 import org.spekframework.spek2.lifecycle.LifecycleListener
 import org.spekframework.spek2.lifecycle.Scope
@@ -29,7 +25,7 @@ internal class SpekTestFilesAdapter internal constructor(private val testFiles: 
 	}
 
 	private fun convert(result: ExecutionResult) = when (result) {
-		is Success -> SUCCESS
-		is Failure -> FAILURE
+		is ExecutionResult.Success -> DefaultTestFiles.ScopeResult.Success
+		is ExecutionResult.Failure -> DefaultTestFiles.ScopeResult.Failure
 	}
 }

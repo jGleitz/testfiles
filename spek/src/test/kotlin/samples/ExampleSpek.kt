@@ -1,8 +1,8 @@
 package de.joshuagleitze.testfiles.spek.samples
 
-import de.joshuagleitze.testfiles.DeletionMode.ALWAYS
-import de.joshuagleitze.testfiles.DeletionMode.IF_SUCCESSFUL
-import de.joshuagleitze.testfiles.DeletionMode.NEVER
+import de.joshuagleitze.testfiles.DeletionMode.Always
+import de.joshuagleitze.testfiles.DeletionMode.IfSuccessful
+import de.joshuagleitze.testfiles.DeletionMode.Never
 import de.joshuagleitze.testfiles.spek.testFiles
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -17,9 +17,9 @@ object ExampleSpek: Spek({
 		}
 
 		it("cleans up files") {
-			testFiles.createFile("irrelevant", delete = ALWAYS)
-			testFiles.createFile("default mode", delete = IF_SUCCESSFUL)
-			testFiles.createFile("output", delete = NEVER)
+			testFiles.createFile("irrelevant", delete = Always)
+			testFiles.createFile("default mode", delete = IfSuccessful)
+			testFiles.createFile("output", delete = Never)
 		}
 	}
 })

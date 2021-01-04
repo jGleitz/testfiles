@@ -1,6 +1,6 @@
 package de.joshuagleitze.testfiles
 
-import de.joshuagleitze.testfiles.DeletionMode.IF_SUCCESSFUL
+import de.joshuagleitze.testfiles.DeletionMode.IfSuccessful
 import java.nio.file.Path
 
 /**
@@ -18,7 +18,7 @@ public interface TestFiles {
 	 * @param delete When to delete the created directory, see [DeletionMode].
 	 * @return The absolute [Path] to the created directory.
 	 */
-	public fun createDirectory(name: String? = null, delete: DeletionMode = IF_SUCCESSFUL): Path
+	public fun createDirectory(name: String? = null, delete: DeletionMode = IfSuccessful): Path
 
 	/**
 	 * Creates a test file in the directory of the current test scope.
@@ -27,5 +27,5 @@ public interface TestFiles {
 	 * @param delete When to delete the created file, see [DeletionMode].
 	 * @return The absolute [Path] to the created file.
 	 */
-	public fun createFile(name: String? = null, delete: DeletionMode = IF_SUCCESSFUL): Path
+	public fun createFile(name: String? = null, delete: DeletionMode = IfSuccessful): Path
 }
