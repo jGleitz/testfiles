@@ -21,12 +21,12 @@ import ch.tutteli.atrium.api.fluent.en_GB.toThrow
 import ch.tutteli.atrium.api.verbs.expect
 import ch.tutteli.atrium.creating.Expect
 import de.joshuagleitze.testfiles.DefaultTestFiles.Companion.determineTestFilesRootDirectory
-import de.joshuagleitze.testfiles.DefaultTestFiles.TestResult.FAILURE
-import de.joshuagleitze.testfiles.DefaultTestFiles.TestResult.SUCCESS
+import de.joshuagleitze.testfiles.DefaultTestFiles.ScopeResult.Failure
+import de.joshuagleitze.testfiles.DefaultTestFiles.ScopeResult.Success
 import de.joshuagleitze.testfiles.DefaultTestFilesSpec.content
-import de.joshuagleitze.testfiles.DeletionMode.ALWAYS
-import de.joshuagleitze.testfiles.DeletionMode.IF_SUCCESSFUL
-import de.joshuagleitze.testfiles.DeletionMode.NEVER
+import de.joshuagleitze.testfiles.DeletionMode.Always
+import de.joshuagleitze.testfiles.DeletionMode.IfSuccessful
+import de.joshuagleitze.testfiles.DeletionMode.Never
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.nio.file.Files.delete
@@ -253,13 +253,13 @@ object DefaultTestFilesSpec: Spek({
 			val firstFileFirstTime = testFiles.createFile()
 			val secondFileFirstTime = testFiles.createFile()
 			val thirdFileFirstTime = testFiles.createFile()
-			testFiles.leaveScope(SUCCESS)
+			testFiles.leaveScope(Success)
 
 			testFiles.enterScope("consistency")
 			val firstFileSecondTime = testFiles.createFile()
 			val secondFileSecondTime = testFiles.createFile()
 			val thirdFileSecondTime = testFiles.createFile()
-			testFiles.leaveScope(SUCCESS)
+			testFiles.leaveScope(Success)
 
 			expect(firstFileFirstTime).toBe(firstFileSecondTime)
 			expect(secondFileFirstTime).toBe(secondFileSecondTime)
@@ -269,9 +269,9 @@ object DefaultTestFilesSpec: Spek({
 
 	describe("file cleanup") {
 		listOf(
-			ALWAYS to SUCCESS,
-			ALWAYS to FAILURE,
-			IF_SUCCESSFUL to SUCCESS
+			Always to Success,
+			Always to Failure,
+			IfSuccessful to Success
 		).forEach { (deletionMode, result) ->
 			it("deletes a file that has been marked to be deleted $deletionMode after $result") {
 				testFiles.enterScope("delete after $result")
@@ -287,9 +287,9 @@ object DefaultTestFilesSpec: Spek({
 		}
 
 		listOf(
-			IF_SUCCESSFUL to FAILURE,
-			NEVER to SUCCESS,
-			NEVER to FAILURE
+			IfSuccessful to Failure,
+			Never to Success,
+			Never to Failure
 		).forEach { (deletionMode, result) ->
 			it("retains a file that has been marked to be deleted $deletionMode after $result") {
 				testFiles.enterScope("retain after $result")
@@ -306,22 +306,22 @@ object DefaultTestFilesSpec: Spek({
 
 		it("retains a file that has been marked to be deleted IF_SUCCESSFUL if only one inner scope reported FAILURE") {
 			testFiles.enterScope("outer")
-			val testfile = testFiles.createFile(delete = IF_SUCCESSFUL)
-			val testdir = testFiles.createDirectory(delete = IF_SUCCESSFUL)
+			val testfile = testFiles.createFile(delete = IfSuccessful)
+			val testdir = testFiles.createDirectory(delete = IfSuccessful)
 
 			testFiles.enterScope("first inner (successful)")
-			testFiles.createFile(delete = IF_SUCCESSFUL)
-			testFiles.leaveScope(SUCCESS)
+			testFiles.createFile(delete = IfSuccessful)
+			testFiles.leaveScope(Success)
 
 			testFiles.enterScope("second inner (failing)")
-			testFiles.createFile(delete = IF_SUCCESSFUL)
-			testFiles.leaveScope(FAILURE)
+			testFiles.createFile(delete = IfSuccessful)
+			testFiles.leaveScope(Failure)
 
 			testFiles.enterScope("third inner (successful)")
-			testFiles.createFile(delete = IF_SUCCESSFUL)
-			testFiles.leaveScope(SUCCESS)
+			testFiles.createFile(delete = IfSuccessful)
+			testFiles.leaveScope(Success)
 
-			testFiles.leaveScope(SUCCESS)
+			testFiles.leaveScope(Success)
 
 			expect(testfile).exists()
 			expect(testdir).exists()
@@ -329,11 +329,11 @@ object DefaultTestFilesSpec: Spek({
 
 		it("tolerates deletion of created files") {
 			testFiles.enterScope("tolerate deletion")
-			delete(testFiles.createFile(delete = ALWAYS))
-			delete(testFiles.createDirectory(delete = ALWAYS))
+			delete(testFiles.createFile(delete = Always))
+			delete(testFiles.createDirectory(delete = Always))
 
 			expect {
-				testFiles.leaveScope(SUCCESS)
+				testFiles.leaveScope(Success)
 			}.notToThrow()
 		}
 	}

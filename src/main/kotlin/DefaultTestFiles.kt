@@ -1,8 +1,8 @@
 package de.joshuagleitze.testfiles
 
-import de.joshuagleitze.testfiles.DeletionMode.ALWAYS
-import de.joshuagleitze.testfiles.DeletionMode.IF_SUCCESSFUL
-import de.joshuagleitze.testfiles.DeletionMode.NEVER
+import de.joshuagleitze.testfiles.DeletionMode.Always
+import de.joshuagleitze.testfiles.DeletionMode.IfSuccessful
+import de.joshuagleitze.testfiles.DeletionMode.Never
 import java.io.IOException
 import java.lang.Integer.MAX_VALUE
 import java.nio.file.DirectoryNotEmptyException
@@ -42,12 +42,12 @@ public class DefaultTestFiles: TestFiles {
 	}
 
 	/**
-	 * Reports that we have left the scope that was entered most recently without being left yet. Also reports that the scope hat the
-	 * provided [result]. A [TestResult.FAILURE] will be applied to all currently entered scopes. That means that this scope will be
-	 * considered to have failed even if [result] is not [TestResult.FAILURE] if any other scope that was entered during the current scope
-	 * reported a [TestResult.FAILURE].
+	 * Reports that we have left the scope that was entered most recently without being left yet. Also reports that the scope had the
+	 * provided [result]. A [ScopeResult.Failure] will be applied to all currently entered scopes. That means that if any other scope that
+	 * was entered during the current scope reported a [ScopeResult.Failure], this scope will be considered to have failed even if [result]
+	 * is not [ScopeResult.Failure]
 	 */
-	public fun leaveScope(result: TestResult) {
+	public fun leaveScope(result: ScopeResult) {
 		currentScope.report(result)
 		currentScope.cleanup()
 		currentScope = currentScope.parent
@@ -57,7 +57,7 @@ public class DefaultTestFiles: TestFiles {
 
 	private class ScopeFiles(parent: ScopeFiles?, val targetDirectory: Path) {
 		val parent = parent ?: this
-		private var result: TestResult? = null
+		private var result: ScopeResult? = null
 		private val toDelete = EnumMap<DeletionMode, MutableSet<Path>>(DeletionMode::class.java)
 		private var created: Boolean = false
 		private val idGenerator = Random(targetDirectory.hashCode().toLong())
@@ -96,7 +96,7 @@ public class DefaultTestFiles: TestFiles {
 			}
 		}
 
-		fun report(result: TestResult) {
+		fun report(result: ScopeResult) {
 			this.result = this.result?.combineWith(result) ?: result
 			if (parent !== this) parent.report(result)
 		}
@@ -165,28 +165,49 @@ public class DefaultTestFiles: TestFiles {
 		}
 	}
 
-	public enum class TestResult {
-		SUCCESS {
-			public override fun combineWith(otherResult: TestResult): TestResult = when (otherResult) {
-				SUCCESS -> SUCCESS
-				FAILURE -> FAILURE
+	/**
+	 * The outcomes of a test scope that are relevant to us.
+	 *
+	 * This does not include skipped scopes, as they should not be reported to [DefaultTestFiles] in the first place.
+	 */
+	public enum class ScopeResult {
+		/**
+		 * All tests in this scope were successful.
+		 */
+		Success {
+			public override fun combineWith(otherResult: ScopeResult): ScopeResult = when (otherResult) {
+				Success -> Success
+				Failure -> Failure
 			}
 
 			public override fun shouldBeDeleted(deletionMode: DeletionMode): Boolean = when (deletionMode) {
-				ALWAYS,
-				IF_SUCCESSFUL -> true
-				NEVER -> false
+				Always,
+				IfSuccessful -> true
+				Never -> false
 			}
 		},
-		FAILURE {
-			public override fun combineWith(otherResult: TestResult): TestResult = FAILURE
+
+		/**
+		 * At least one test in the current scope failed in any way.
+		 */
+		Failure {
+			public override fun combineWith(otherResult: ScopeResult): ScopeResult = Failure
 			public override fun shouldBeDeleted(deletionMode: DeletionMode): Boolean = when (deletionMode) {
-				ALWAYS -> true
-				IF_SUCCESSFUL, NEVER -> false
+				Always -> true
+				IfSuccessful, Never -> false
 			}
 		};
 
-		public abstract fun combineWith(otherResult: TestResult): TestResult
+		/**
+		 * Combines this result with [otherResult], such that if a scope had previously `this` result and [otherResult] occurred in the
+		 * scope, the returned value is the new overall result of the scope.
+		 */
+		public abstract fun combineWith(otherResult: ScopeResult): ScopeResult
+
+		/**
+		 * Determines whether, if some file was created with the provided [deletionMode] for a scope that had `this` result, the file should
+		 * now be deleted.
+		 */
 		public abstract fun shouldBeDeleted(deletionMode: DeletionMode): Boolean
 	}
 }

@@ -1,8 +1,8 @@
 package de.joshuagleitze.testfiles.kotest.samples
 
-import de.joshuagleitze.testfiles.DeletionMode.ALWAYS
-import de.joshuagleitze.testfiles.DeletionMode.IF_SUCCESSFUL
-import de.joshuagleitze.testfiles.DeletionMode.NEVER
+import de.joshuagleitze.testfiles.DeletionMode.Always
+import de.joshuagleitze.testfiles.DeletionMode.IfSuccessful
+import de.joshuagleitze.testfiles.DeletionMode.Never
 import de.joshuagleitze.testfiles.kotest.testFiles
 import io.kotest.core.spec.style.DescribeSpec
 
@@ -14,9 +14,9 @@ class ExampleSpek: DescribeSpec({
 		}
 
 		it("cleans up files") {
-			testFiles.createFile("irrelevant", delete = ALWAYS)
-			testFiles.createFile("default mode", delete = IF_SUCCESSFUL)
-			testFiles.createFile("output", delete = NEVER)
+			testFiles.createFile("irrelevant", delete = Always)
+			testFiles.createFile("default mode", delete = IfSuccessful)
+			testFiles.createFile("output", delete = Never)
 		}
 	}
 })

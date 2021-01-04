@@ -12,7 +12,7 @@ val artifactId by extra("kotest-files")
 dependencies {
 	val kotestVersion = "4.3.2"
 
-	implementation(rootProject)
+	api(rootProject)
 	// Kotest is a peer dependency
 	compileOnly(name = "kotest-framework-api", version = kotestVersion, group = "io.kotest")
 

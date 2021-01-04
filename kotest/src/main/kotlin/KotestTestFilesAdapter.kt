@@ -33,8 +33,8 @@ internal object KotestTestFilesAdapter: TestListener {
 	}
 
 	private fun convert(result: TestResult) = when (result.status) {
-		Success -> DefaultTestFiles.TestResult.SUCCESS
-		Error, Failure -> DefaultTestFiles.TestResult.FAILURE
+		Success -> DefaultTestFiles.ScopeResult.Success
+		Error, Failure -> DefaultTestFiles.ScopeResult.Failure
 		Ignored -> error("contact breach: kotest should not have called us!")
 	}
 }
