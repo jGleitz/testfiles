@@ -86,6 +86,13 @@ evaluationDependsOnChildren()
 val closeAndReleaseRepository by project.tasks
 
 allprojects {
+	apply {
+		plugin("org.jetbrains.dokka")
+		plugin("de.marcphilipp.nexus-publish")
+		plugin("org.gradle.maven-publish")
+		plugin("org.gradle.signing")
+	}
+
 	val sourcesJar by tasks.registering(Jar::class) {
 		group = "build"
 		description = "Assembles the source code into a jar"
@@ -116,15 +123,23 @@ allprojects {
 		archives(dokkaJar)
 	}
 
-	rootProject.publishing.publications.register<MavenPublication>(name) {
+	signing {
+		val signingKey: String? by project
+		val signingKeyPassword: String? by project
+		useInMemoryPgpKeys(signingKey, signingKeyPassword)
+	}
+
+	publishing.publications.register<MavenPublication>("maven") {
+		artifactId = if (extra.has("artifactId")) extra["artifactId"] as String else project.name
+
 		from(components["java"])
 		artifact(sourcesJar)
 		artifact(dokkaJar)
 
-		rootProject.signing.sign(this)
+		signing.sign(this)
 
 		pom {
-			name.set(provider { "$groupId:$artifactId" })
+			name.set("$groupId:$artifactId")
 			description.set("Easily manage test files and directories when testing with Spek!")
 			inceptionYear.set("2020")
 			url.set("https://github.com/$githubRepository")
@@ -169,12 +184,6 @@ val githubPackages = publishing.repositories.maven("https://maven.pkg.github.com
 val mavenCentral = nexusPublishing.repositories.sonatype {
 	username.set(ossrhUsername)
 	password.set(ossrhPassword)
-}
-
-signing {
-	val signingKey: String? by project
-	val signingKeyPassword: String? by project
-	useInMemoryPgpKeys(signingKey, signingKeyPassword)
 }
 
 closeAndReleaseRepository.mustRunAfter(mavenCentral.publishTask)

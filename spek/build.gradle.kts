@@ -8,6 +8,8 @@ plugins {
 	id("org.jetbrains.dokka")
 }
 
+val artifactId by extra("spek-testfiles")
+
 dependencies {
 	val spekVersion = "2.0.15"
 
@@ -48,7 +50,7 @@ tasks.compileTestKotlin {
 
 tasks.withType<DokkaTask> {
 	dokkaSourceSets.named("main") {
-		samples.from("src/test/kotlin/ExampleSpek.kt")
+		samples.from("src/test/kotlin/samples/ExampleSpek.kt")
 	}
 }
 

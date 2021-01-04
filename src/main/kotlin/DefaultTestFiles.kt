@@ -167,26 +167,26 @@ public class DefaultTestFiles: TestFiles {
 
 	public enum class TestResult {
 		SUCCESS {
-			override fun combineWith(otherResult: TestResult) = when (otherResult) {
+			public override fun combineWith(otherResult: TestResult): TestResult = when (otherResult) {
 				SUCCESS -> SUCCESS
 				FAILURE -> FAILURE
 			}
 
-			override fun shouldBeDeleted(deletionMode: DeletionMode) = when (deletionMode) {
+			public override fun shouldBeDeleted(deletionMode: DeletionMode): Boolean = when (deletionMode) {
 				ALWAYS,
 				IF_SUCCESSFUL -> true
 				NEVER -> false
 			}
 		},
 		FAILURE {
-			override fun combineWith(otherResult: TestResult) = FAILURE
-			override fun shouldBeDeleted(deletionMode: DeletionMode) = when (deletionMode) {
+			public override fun combineWith(otherResult: TestResult): TestResult = FAILURE
+			public override fun shouldBeDeleted(deletionMode: DeletionMode): Boolean = when (deletionMode) {
 				ALWAYS -> true
 				IF_SUCCESSFUL, NEVER -> false
 			}
 		};
 
-		internal abstract fun combineWith(otherResult: TestResult): TestResult
-		internal abstract fun shouldBeDeleted(deletionMode: DeletionMode): Boolean
+		public abstract fun combineWith(otherResult: TestResult): TestResult
+		public abstract fun shouldBeDeleted(deletionMode: DeletionMode): Boolean
 	}
 }
