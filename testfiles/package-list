@@ -1,0 +1,7 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+de.joshuagleitze.testfiles
+de.joshuagleitze.testfiles.kotest
+de.joshuagleitze.testfiles.spek
+
