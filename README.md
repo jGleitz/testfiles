@@ -9,10 +9,10 @@ A test helper to easily create files and directories for testing purposes.
 
 ## Dependencies
 
-Framework | Dependency
---- | ---
-[Spek](https://www.spekframework.org/) |  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/spek-testfiles/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/spek-testfiles) `de.joshuagleitze:spek-testfiles:<version>`
-[Kotest](https://kotest.io/) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/kotest-files/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/kotest-files) `de.joshuagleitze:kotest-files:<version>`
+Framework | Link | Dependency
+--- | --- | ---
+[Spek](https://www.spekframework.org/) |  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/spek-testfiles/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/spek-testfiles) | `de.joshuagleitze:spek-testfiles:<version>`
+[Kotest](https://kotest.io/) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/kotest-files/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/kotest-files) | `de.joshuagleitze:kotest-files:<version>`
 
 ## Usage
 
@@ -22,7 +22,7 @@ Create a `testFiles` instance for your Spek by using
 the  [`testFiles()`](https://jgleitz.github.io/testfiles/testfiles/de.joshuagleitze.testfiles.spek/test-files.html) function:
 
 ```kotlin
-import DeletionMode.*
+import de.joshuagleitze.testfiles.DeletionMode.*
 import de.joshuagleitze.testfiles.spek.testFiles
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -51,7 +51,7 @@ object ExampleSpek: Spek({
 Use the global [`testFiles`](https://jgleitz.github.io/testfiles/testfiles/de.joshuagleitze.testfiles.kotest/test-files.html) property:
 
 ```kotlin
-import DeletionMode.*
+import de.joshuagleitze.testfiles.DeletionMode.*
 import de.joshuagleitze.testfiles.kotest.testFiles
 import io.kotest.core.spec.style.DescribeSpec
 
@@ -93,8 +93,8 @@ group failed. This allows you to examine test output after tests fails, but does
 
 The behaviour can be changed by passing the
 correct [`DeletionMode`](https://jgleitz.github.io/testfiles/testfiles/de.joshuagleitze.testfiles/-deletion-mode/index.html)
-to [`createFile`](https://jgleitz.github.io/spek-testfiles/spek-testfiles/de.joshuagleitze.test.spek.testfiles/-test-files/create-file.html)
-or [`createDirectory`](https://jgleitz.github.io/spek-testfiles/spek-testfiles/de.joshuagleitze.test.spek.testfiles/-test-files/create-directory.html):
+to [`createFile`](https://jgleitz.github.io/testfiles/testfiles/de.joshuagleitze.testfiles/-test-files/create-file.html)
+or [`createDirectory`](https://jgleitz.github.io/testfiles/testfiles/de.joshuagleitze.testfiles/-test-files/create-directory.html):
 
 [`DeletionMode`](https://jgleitz.github.io/testfiles/testfiles/de.joshuagleitze.testfiles/-deletion-mode/index.html) | behaviour
 --- | ---
@@ -113,4 +113,4 @@ sure the same test will always get the same file names every execution.
 For example, the first generated file from the example above might have the
 path `<test file directory>/[ExampleSpek]/[using test files]/[generates file names]/test-162363182`.
 
-If a file name is provided, the name must not be wrapped in angle brackets; i.e. either not start with `[` or not end with `]`. 
+If a file name is provided, the name must not be wrapped in angle brackets.
