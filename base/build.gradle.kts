@@ -39,7 +39,6 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
-	reports.junitXml.isEnabled = true
 
 	val testPwd = buildDir.resolve("test-pwd")
 	doFirst {

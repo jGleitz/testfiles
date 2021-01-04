@@ -56,5 +56,4 @@ tasks.withType<DokkaTask> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
-	reports.junitXml.isEnabled = true
 }
