@@ -7,7 +7,7 @@ import de.joshuagleitze.testfiles.spek.testFiles
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-object ExampleSpek: Spek({
+object ExampleSpec: Spek({
 	val testFiles = testFiles()
 
 	describe("using test files") {
