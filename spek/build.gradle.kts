@@ -9,6 +9,7 @@ plugins {
 }
 
 val artifactId by extra("spek-testfiles")
+val description by extra("Manage test files and directories neatly when testing with Spek!")
 
 dependencies {
 	val spekVersion = "2.0.15"

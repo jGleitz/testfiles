@@ -102,7 +102,7 @@ subprojects {
 
 			pom {
 				name.set("$groupId:$artifactId")
-				description.set("Easily manage test files and directories when testing with Spek!")
+				if (extra.has("description")) description.set(extra["description"] as String)
 				inceptionYear.set("2020")
 				url.set("https://github.com/$githubRepository")
 				ciManagement {
