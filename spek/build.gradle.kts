@@ -17,7 +17,7 @@ dependencies {
 	compileOnly(name = "spek-dsl-jvm", group = "org.spekframework.spek2", version = spekVersion)
 	compileOnly(name = "spek-runtime-jvm", group = "org.spekframework.spek2", version = spekVersion)
 
-	api(rootProject)
+	api(project(":base"))
 	testImplementation(name = "spek-dsl-jvm", version = spekVersion, group = "org.spekframework.spek2")
 	testImplementation(name = "atrium-fluent-en_GB", version = "0.15.0", group = "ch.tutteli.atrium")
 	testRuntimeOnly(name = "spek-runner-junit5", version = spekVersion, group = "org.spekframework.spek2")

@@ -1,3 +1,3 @@
 rootProject.name = "testfiles"
 
-include("kotest", "spek")
+include("base", "kotest", "spek")
