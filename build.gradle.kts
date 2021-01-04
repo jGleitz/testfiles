@@ -28,6 +28,10 @@ allprojects {
 	}
 }
 
+tasks.withType<Test> {
+	reports.junitXml.isEnabled = true
+}
+
 val ossrhUsername: String? by project
 val ossrhPassword: String? by project
 val githubRepository: String? by project
