@@ -19,7 +19,7 @@ dependencies {
 	compileOnly(name = "kotest-framework-api", version = kotestVersion, group = "io.kotest")
 
 	testImplementation(name = "kotest-runner-junit5", version = kotestVersion, group = "io.kotest")
-	testImplementation(name = "atrium-fluent-en_GB", version = "0.15.0", group = "ch.tutteli.atrium")
+	testImplementation(name = "atrium-fluent-en_GB", version = "0.16.0", group = "ch.tutteli.atrium")
 
 	constraints {
 		testImplementation(kotlin("reflect", version = KotlinCompilerVersion.VERSION))

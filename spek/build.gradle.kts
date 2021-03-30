@@ -20,7 +20,7 @@ dependencies {
 
 	api(project(":base"))
 	testImplementation(name = "spek-dsl-jvm", version = spekVersion, group = "org.spekframework.spek2")
-	testImplementation(name = "atrium-fluent-en_GB", version = "0.15.0", group = "ch.tutteli.atrium")
+	testImplementation(name = "atrium-fluent-en_GB", version = "0.16.0", group = "ch.tutteli.atrium")
 	testRuntimeOnly(name = "spek-runner-junit5", version = spekVersion, group = "org.spekframework.spek2")
 
 	constraints {
