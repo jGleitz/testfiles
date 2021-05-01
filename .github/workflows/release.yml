@@ -25,6 +25,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
+          distribution: adopt
       - name: Prepare
         run: ./gradlew clean dependencies
       - name: Assemble Artefacts
@@ -61,6 +62,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
+          distribution: adopt
       - name: Prepare
         run: ./gradlew clean dependencies
       - name: Generate Documentation
