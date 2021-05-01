@@ -6,8 +6,7 @@ plugins {
 	id("com.palantir.git-version") version "0.12.3"
 	`maven-publish`
 	signing
-	id("de.marcphilipp.nexus-publish") version "0.4.0"
-	id("io.codearte.nexus-staging") version "0.30.0"
+	id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
 group = "de.joshuagleitze"
@@ -37,19 +36,15 @@ val githubRepository: String? by project
 val githubOwner = githubRepository?.split("/")?.get(0)
 val githubToken: String? by project
 
-nexusStaging {
-	username = ossrhUsername
-	password = ossrhPassword
-	numberOfRetries = 42
+val mavenCentral = nexusPublishing.repositories.sonatype {
+	username.set(ossrhUsername)
+	password.set(ossrhPassword)
 }
-
-val closeAndReleaseRepository by project.tasks
 
 subprojects {
 	afterEvaluate {
 		apply {
 			plugin("org.jetbrains.dokka")
-			plugin("de.marcphilipp.nexus-publish")
 			plugin("org.gradle.maven-publish")
 			plugin("org.gradle.signing")
 		}
@@ -142,21 +137,16 @@ subprojects {
 			}
 		}
 
-		val mavenCentral = nexusPublishing.repositories.sonatype {
-			username.set(ossrhUsername)
-			password.set(ossrhPassword)
-		}
-
 		val publishToGithub = tasks.named("publishAllPublicationsTo${githubPackages.name.capitalize()}Repository")
 		val publishToMavenCentral = tasks.named("publishTo${mavenCentral.name.capitalize()}")
 
 		tasks.register("release") {
 			group = "release"
 			description = "Releases the project to all remote repositories"
-			dependsOn(publishToGithub, publishToMavenCentral, rootProject.tasks.closeAndReleaseRepository)
+			dependsOn(publishToGithub, publishToMavenCentral, rootProject.tasks.closeAndReleaseStagingRepository)
 		}
 
-		rootProject.tasks.closeAndReleaseRepository { mustRunAfter(publishToMavenCentral) }
+		rootProject.tasks.closeAndReleaseStagingRepository { mustRunAfter(publishToMavenCentral) }
 	}
 }
 
