@@ -12,7 +12,7 @@ val artifactId by extra("kotest-files")
 val description by extra("Manage test files and directories neatly when testing with Kotest!")
 
 dependencies {
-	val kotestVersion = "4.6.0"
+	val kotestVersion = "4.6.1"
 
 	api(project(":base"))
 	// Kotest is a peer dependency
