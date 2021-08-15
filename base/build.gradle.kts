@@ -11,7 +11,7 @@ val artifactId by extra("testfiles")
 val description by extra("Manage test files and directories neatly!")
 
 dependencies {
-	val spekVersion = "2.0.15"
+	val spekVersion = "2.0.17"
 
 	testImplementation(name = "spek-dsl-jvm", version = spekVersion, group = "org.spekframework.spek2")
 	testImplementation(name = "atrium-fluent-en_GB", version = "0.16.0", group = "ch.tutteli.atrium")
