@@ -12,7 +12,7 @@ val artifactId by extra("spek-testfiles")
 val description by extra("Manage test files and directories neatly when testing with Spek!")
 
 dependencies {
-	val spekVersion = "2.0.15"
+	val spekVersion = "2.0.17"
 
 	// Spek is a peer dependency
 	compileOnly(name = "spek-dsl-jvm", group = "org.spekframework.spek2", version = spekVersion)
