@@ -6,7 +6,7 @@ plugins {
 	id("com.palantir.git-version") version "0.12.3"
 	`maven-publish`
 	signing
-	id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+	id("io.github.gradle-nexus.publish-plugin") version "1.2.0"
 }
 
 group = "de.joshuagleitze"
