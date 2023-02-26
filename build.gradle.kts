@@ -7,6 +7,7 @@ plugins {
 	`maven-publish`
 	signing
 	id("io.github.gradle-nexus.publish-plugin") version "1.2.0"
+	idea
 }
 
 group = "de.joshuagleitze"
@@ -21,8 +22,15 @@ subprojects {
 }
 
 allprojects {
+	plugins.apply("org.gradle.idea")
 	repositories {
 		mavenCentral()
+	}
+	idea {
+		module {
+			isDownloadJavadoc = true
+			isDownloadSources = true
+		}
 	}
 }
 
