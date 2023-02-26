@@ -27,7 +27,7 @@ allprojects {
 }
 
 tasks.withType<Test> {
-	reports.junitXml.isEnabled = true
+	reports.junitXml.required.set(true)
 }
 
 val ossrhUsername: String? by project
@@ -137,8 +137,8 @@ subprojects {
 			}
 		}
 
-		val publishToGithub = tasks.named("publishAllPublicationsTo${githubPackages.name.capitalize()}Repository")
-		val publishToMavenCentral = tasks.named("publishTo${mavenCentral.name.capitalize()}")
+		val publishToGithub = tasks.named("publishAllPublicationsTo${githubPackages.name.firstUpper()}Repository")
+		val publishToMavenCentral = tasks.named("publishTo${mavenCentral.name.firstUpper()}")
 
 		tasks.register("release") {
 			group = "release"
@@ -152,4 +152,5 @@ subprojects {
 
 val Project.isSnapshot get() = versionDetails.commitDistance != 0
 fun String.drop(prefix: String) = if (this.startsWith(prefix)) this.drop(prefix.length) else this
+fun String.firstUpper() = this.replaceFirstChar { it.titlecase() }
 val Project.versionDetails get() = (this.extra["versionDetails"] as groovy.lang.Closure<*>)() as com.palantir.gradle.gitversion.VersionDetails
