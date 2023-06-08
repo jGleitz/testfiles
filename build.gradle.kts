@@ -2,7 +2,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
 	kotlin("jvm") version "1.8.22"
-	id("org.jetbrains.dokka") version "1.8.10"
+	id("org.jetbrains.dokka") version "1.8.20"
 	id("com.palantir.git-version") version "3.0.0"
 	`maven-publish`
 	signing
