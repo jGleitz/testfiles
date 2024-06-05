@@ -3,7 +3,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 plugins {
 	kotlin("jvm") version "1.9.23"
 	id("org.jetbrains.dokka") version "1.9.20"
-	id("com.palantir.git-version") version "3.0.0"
+	id("com.palantir.git-version") version "3.1.0"
 	`maven-publish`
 	signing
 	id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
