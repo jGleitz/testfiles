@@ -1,4 +1,4 @@
-import org.gradle.api.JavaVersion.VERSION_11
+import org.gradle.api.JavaVersion.VERSION_17
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -27,8 +27,8 @@ dependencies {
 }
 
 java {
-	sourceCompatibility = VERSION_11
-	targetCompatibility = VERSION_11
+	sourceCompatibility = VERSION_17
+	targetCompatibility = VERSION_17
 }
 
 kotlin {
@@ -37,7 +37,7 @@ kotlin {
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
-		jvmTarget = "11"
+		jvmTarget = "17"
 	}
 }
 
