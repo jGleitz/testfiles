@@ -48,38 +48,14 @@ jobs:
           name: test-results-${{ matrix.os }}-java-${{ matrix.java-version }}
           path: "**/build/test-results/"
 
-  docs:
-    name: Build Documentation
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-
-      - name: Read Java Version from .sdkmanrc
-        id: sdkmanrc
-        run: |
-          version=$(sed -n 's/^java=\([^-]*\).*/\1/p' .sdkmanrc)
-          echo "java-version=$version" >> "$GITHUB_OUTPUT"
-
-      - name: Set Up JDK
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
-        with:
-          java-version: ${{ steps.sdkmanrc.outputs.java-version }}
-          distribution: temurin
-
-      - name: Set Up Gradle
-        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
-
       - name: Generate Documentation
+        if: matrix.os == 'ubuntu-latest' && matrix.java-version == 25
         run: ./gradlew dokkaHtmlCollector
         env:
           ORG_GRADLE_PROJECT_githubRepository: ${{ github.repository }}
 
       - name: Upload Documentation
+        if: matrix.os == 'ubuntu-latest' && matrix.java-version == 25
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:
           path: ./build/dokka/htmlCollector
@@ -87,7 +63,7 @@ jobs:
   deploy-docs:
     name: Deploy Documentation
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    needs: [build, docs]
+    needs: build
     runs-on: ubuntu-latest
 
     permissions:

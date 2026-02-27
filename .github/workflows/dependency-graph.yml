@@ -16,16 +16,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - name: Read Java Version from .sdkmanrc
-        id: sdkmanrc
-        run: |
-          version=$(sed -n 's/^java=\([^-]*\).*/\1/p' .sdkmanrc)
-          echo "java-version=$version" >> "$GITHUB_OUTPUT"
-
       - name: Set Up Java
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
         with:
-          java-version: ${{ steps.sdkmanrc.outputs.java-version }}
+          java-version-file: '.sdkmanrc'
           distribution: temurin
 
       - name: Generate and Submit Dependency Graph
