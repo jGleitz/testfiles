@@ -1,0 +1,30 @@
+# See https://github.com/dorny/test-reporter?tab=readme-ov-file#recommended-setup-for-public-repositories
+# for more info on this workflow
+
+name: Test Report
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  add_report:
+    name: Annotate Test Results on Pull Request
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: dorny/test-reporter@b082adf0eced0765477756c2a610396589b8c637 # v2
+        with:
+          artifact: /test-results-.*/
+          name: Test Results
+          path: "**/*.xml"
+          reporter: java-junit
+          max-annotations: "50"
+          fail-on-error: "false"

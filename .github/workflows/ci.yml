@@ -2,13 +2,43 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
   pull_request:
 
 jobs:
+  should-run:
+    name: Needed?
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: read
+
+    outputs:
+      result: ${{ steps.check.outputs.result }}
+
+    steps:
+      - name: Check for Open Pull Request
+        id: check
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF_NAME" != "master" ]]; then
+            open_prs=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$GITHUB_REF_NAME" --state open --json number --jq 'length')
+            if [[ "$open_prs" -gt 0 ]]; then
+              echo "result=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+          echo "result=true" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   build:
-    name: Build
+    name: Assemble & Test
+    needs: should-run
+    if: needs.should-run.outputs.result == 'true'
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
@@ -16,35 +46,33 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/wrapper
-            ~/.gradle/caches
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle.*') }}
-          restore-keys: |
-            gradle-${{ runner.os }}
-            gradle-
-      - name: Set up JDK ${{ matrix.java-version }}
-        uses: actions/setup-java@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Set Up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
         with:
           java-version: ${{ matrix.java-version }}
-          distribution: adopt
-      - name: Prepare
-        run: ./gradlew clean dependencies
+          distribution: temurin
+
+      - name: Set Up Gradle
+        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+        with:
+          build-scan-publish: true
+          build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
+          build-scan-terms-of-use-agree: "yes"
+
       - name: Build
         run: ./gradlew assemble testClasses
+
       - name: Test
         run: ./gradlew test
-      - name: Publish Test Report
-        uses: scacap/action-surefire-report@v1
-        if: failure()
+
+      - name: Upload Test Results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: '**/build/test-results/test/TEST-*.xml'
-          check_name: Test Results (${{ matrix.os }}, ${{ matrix.java-version }})
+          name: test-results-${{ matrix.os }}-java-${{ matrix.java-version }}
+          path: "**/build/test-results/"
 
   release:
     name: Release Check
@@ -52,11 +80,13 @@ jobs:
     needs: build
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: lts/*
+
       - name: Release Check
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
