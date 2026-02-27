@@ -1,4 +1,4 @@
-import org.gradle.api.JavaVersion.VERSION_1_8
+import org.gradle.api.JavaVersion.VERSION_11
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -23,8 +23,8 @@ dependencies {
 }
 
 java {
-	sourceCompatibility = VERSION_1_8
-	targetCompatibility = VERSION_1_8
+	sourceCompatibility = VERSION_11
+	targetCompatibility = VERSION_11
 }
 
 kotlin {
@@ -33,7 +33,7 @@ kotlin {
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
-		jvmTarget = "1.8"
+		jvmTarget = "11"
 		freeCompilerArgs += "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
 	}
 }
