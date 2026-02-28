@@ -4,6 +4,9 @@ on:
   release:
     types: [ published ]
 
+env:
+  ORG_GRADLE_PROJECT_version: ${{ github.event.release.tag_name }}
+
 jobs:
   release:
     name: Release Artefacts
