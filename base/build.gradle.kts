@@ -28,7 +28,6 @@ java {
 }
 
 kotlin {
-	explicitApi()
 	compilerOptions {
 		jvmTarget = JvmTarget.JVM_17
 		freeCompilerArgs.add("-opt-in=kotlin.io.path.ExperimentalPathApi")
