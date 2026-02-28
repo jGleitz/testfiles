@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master, renovate/** ]
+    branches: [ main, renovate/** ]
   pull_request:
 
 jobs:
@@ -62,7 +62,7 @@ jobs:
 
   deploy-docs:
     name: Deploy Documentation
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
 
