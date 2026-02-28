@@ -4,7 +4,6 @@ plugins {
 	kotlin("jvm") version "2.3.10"
 	id("org.jetbrains.dokka") version "2.1.0"
 	id("org.jetbrains.dokka-javadoc") version "2.1.0" apply false
-	id("com.palantir.git-version") version "3.0.0"
 	`maven-publish`
 	signing
 	id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
@@ -12,9 +11,8 @@ plugins {
 }
 
 group = "de.joshuagleitze"
-version = if (isSnapshot) versionDetails.gitHash else versionDetails.lastTag.drop("v")
-status = if (isSnapshot) "snapshot" else "release"
-val gitRef = if (isSnapshot) versionDetails.gitHash else versionDetails.lastTag
+version = if (version == "unspecified") "local" else version.toString().removePrefix("v")
+status = if (version == "local") "snapshot" else "release"
 
 subprojects {
 	group = rootProject.group
@@ -71,7 +69,7 @@ subprojects {
 			dokkaSourceSets.named("main") {
 				sourceLink {
 					localDirectory = file("src/main/kotlin")
-					remoteUrl = uri("https://github.com/$githubRepository/blob/$gitRef/$projectPath/src/main/kotlin")
+					remoteUrl = uri("https://github.com/$githubRepository/blob/main/$projectPath/src/main/kotlin")
 					remoteLineSuffix = "#L"
 				}
 			}
@@ -159,7 +157,4 @@ subprojects {
 	}
 }
 
-val Project.isSnapshot get() = versionDetails.commitDistance != 0
-fun String.drop(prefix: String) = if (this.startsWith(prefix)) this.drop(prefix.length) else this
 fun String.firstUpper() = this.replaceFirstChar { it.titlecase() }
-val Project.versionDetails get() = (this.extra["versionDetails"] as groovy.lang.Closure<*>)() as com.palantir.gradle.gitversion.VersionDetails
