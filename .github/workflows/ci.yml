@@ -56,26 +56,10 @@ jobs:
 
       - name: Upload Documentation
         if: matrix.os == 'ubuntu-latest' && matrix.java-version == 25
-        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
+          name: documentation
           path: ./build/dokka/htmlCollector
-
-  deploy-docs:
-    name: Deploy Documentation
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: build
-    runs-on: ubuntu-latest
-
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-
-    steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
 
   release:
     name: Release Check
