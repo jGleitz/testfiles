@@ -6,7 +6,7 @@ plugins {
 	id("org.jetbrains.dokka-javadoc") version "2.1.0" apply false
 	`maven-publish`
 	signing
-	id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
+	id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 	idea
 }
 
@@ -150,10 +150,10 @@ subprojects {
 		tasks.register("release") {
 			group = "release"
 			description = "Releases the project to all remote repositories"
-			dependsOn(publishToGithub, publishToMavenCentral, rootProject.tasks.closeAndReleaseStagingRepository)
+			dependsOn(publishToGithub, publishToMavenCentral, rootProject.tasks.closeAndReleaseStagingRepositories)
 		}
 
-		rootProject.tasks.closeAndReleaseStagingRepository { mustRunAfter(publishToMavenCentral) }
+		rootProject.tasks.closeAndReleaseStagingRepositories { mustRunAfter(publishToMavenCentral) }
 	}
 }
 
