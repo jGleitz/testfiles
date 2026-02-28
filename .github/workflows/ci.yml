@@ -36,10 +36,7 @@ jobs:
           build-scan-terms-of-use-agree: "yes"
 
       - name: Build
-        run: ./gradlew assemble testClasses
-
-      - name: Test
-        run: ./gradlew test
+        run: ./gradlew build
 
       - name: Upload Test Results
         if: ${{ !cancelled() }}
