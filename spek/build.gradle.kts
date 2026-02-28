@@ -41,7 +41,7 @@ kotlin {
 
 dokka {
 	dokkaSourceSets.main {
-		samples.from("src/test/kotlin/samples/ExampleSpek.kt")
+		samples.from("src/test/kotlin/samples/ExampleSpec.kt")
 	}
 }
 
