@@ -1,6 +1,5 @@
 import org.gradle.api.JavaVersion.VERSION_17
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
 	kotlin("jvm")
@@ -19,9 +18,10 @@ dependencies {
 
 	testImplementation(name = "kotest-runner-junit5", version = kotestVersion, group = "io.kotest")
 	testImplementation(name = "atrium-fluent-en_GB", version = "0.16.0", group = "ch.tutteli.atrium")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	constraints {
-		testImplementation(kotlin("reflect", version = KotlinCompilerVersion.VERSION))
+		testImplementation(kotlin("reflect"))
 	}
 }
 
@@ -32,17 +32,14 @@ java {
 
 kotlin {
 	explicitApi()
-}
-
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		jvmTarget = "17"
+	compilerOptions {
+		jvmTarget = JvmTarget.JVM_17
 	}
 }
 
 tasks.compileTestKotlin {
-	kotlinOptions {
-		freeCompilerArgs += "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
+	compilerOptions {
+		freeCompilerArgs.add("-opt-in=kotlin.io.path.ExperimentalPathApi")
 	}
 }
 
