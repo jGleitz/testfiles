@@ -33,14 +33,9 @@ java {
 }
 
 kotlin {
+	explicitApi()
 	compilerOptions {
 		jvmTarget = JvmTarget.JVM_17
-	}
-}
-
-tasks.compileTestKotlin {
-	compilerOptions {
-		freeCompilerArgs.add("-opt-in=kotlin.io.path.ExperimentalPathApi")
 	}
 }
 
