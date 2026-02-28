@@ -46,14 +46,14 @@ jobs:
           ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
 
       - name: Generate Documentation
-        run: ./gradlew dokkaHtmlCollector
+        run: ./gradlew dokkaGeneratePublicationHtml
         env:
           ORG_GRADLE_PROJECT_githubRepository: ${{ github.repository }}
 
       - name: Upload Documentation
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:
-          path: ./build/dokka/htmlCollector
+          path: ./build/dokka/html
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

@@ -1,5 +1,4 @@
 import org.gradle.api.JavaVersion.VERSION_17
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -47,8 +46,8 @@ tasks.compileTestKotlin {
 	}
 }
 
-tasks.withType<DokkaTask> {
-	dokkaSourceSets.named("main") {
+dokka {
+	dokkaSourceSets.main {
 		samples.from("src/test/kotlin/samples/ExampleSpek.kt")
 	}
 }
