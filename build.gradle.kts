@@ -1,8 +1,9 @@
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaExtension
 
 plugins {
 	kotlin("jvm") version "2.3.10"
-	id("org.jetbrains.dokka") version "1.9.20"
+	id("org.jetbrains.dokka") version "2.1.0"
+	id("org.jetbrains.dokka-javadoc") version "2.1.0" apply false
 	id("com.palantir.git-version") version "3.0.0"
 	`maven-publish`
 	signing
@@ -53,6 +54,7 @@ subprojects {
 	afterEvaluate {
 		apply {
 			plugin("org.jetbrains.dokka")
+			plugin("org.jetbrains.dokka-javadoc")
 			plugin("org.gradle.maven-publish")
 			plugin("org.gradle.signing")
 		}
@@ -64,14 +66,13 @@ subprojects {
 			from(sourceSets.main.map { it.allSource })
 		}
 
-		tasks.withType<DokkaTask> {
+		val projectPath = projectDir.absoluteFile.relativeTo(rootProject.projectDir.absoluteFile)
+		configure<DokkaExtension> {
 			dokkaSourceSets.named("main") {
-				this.DokkaSourceSetID(if (extra.has("artifactId")) extra["artifactId"] as String else project.name)
 				sourceLink {
-					val projectPath = projectDir.absoluteFile.relativeTo(rootProject.projectDir.absoluteFile)
-					localDirectory.set(file("src/main/kotlin"))
-					remoteUrl.set(uri("https://github.com/$githubRepository/blob/$gitRef/$projectPath/src/main/kotlin").toURL())
-					remoteLineSuffix.set("#L")
+					localDirectory = file("src/main/kotlin")
+					remoteUrl = uri("https://github.com/$githubRepository/blob/$gitRef/$projectPath/src/main/kotlin")
+					remoteLineSuffix = "#L"
 				}
 			}
 		}
@@ -80,7 +81,7 @@ subprojects {
 			group = "build"
 			description = "Assembles the Kotlin docs with Dokka"
 			archiveClassifier.set("javadoc")
-			from(tasks.named("dokkaJavadoc"))
+			from(tasks.named("dokkaGeneratePublicationJavadoc"))
 		}
 
 		artifacts {
