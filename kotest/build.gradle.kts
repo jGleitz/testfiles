@@ -10,14 +10,12 @@ val artifactId by extra("kotest-files")
 val description by extra("Manage test files and directories neatly when testing with Kotest!")
 
 dependencies {
-	val kotestVersion = "4.6.2"
-
 	api(project(":base"))
 	// Kotest is a peer dependency
-	compileOnly(name = "kotest-framework-api", version = kotestVersion, group = "io.kotest")
+	compileOnly("io.kotest:kotest-framework-api:4.6.2")
 
-	testImplementation(name = "kotest-runner-junit5", version = kotestVersion, group = "io.kotest")
-	testImplementation(name = "atrium-fluent-en_GB", version = "0.16.0", group = "ch.tutteli.atrium")
+	testImplementation("io.kotest:kotest-runner-junit5:4.6.2")
+	testImplementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.16.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	constraints {
