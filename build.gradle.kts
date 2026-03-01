@@ -1,19 +1,18 @@
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.DokkaExtension
 
 plugins {
-	kotlin("jvm") version "1.9.25"
-	id("org.jetbrains.dokka") version "1.9.20"
-	id("com.palantir.git-version") version "3.4.0"
+	kotlin("jvm") version "2.3.10"
+	id("org.jetbrains.dokka") version "2.1.0"
+	id("org.jetbrains.dokka-javadoc") version "2.1.0" apply false
 	`maven-publish`
 	signing
-	id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
+	id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 	idea
 }
 
 group = "de.joshuagleitze"
-version = if (isSnapshot) versionDetails.gitHash else versionDetails.lastTag.drop("v")
-status = if (isSnapshot) "snapshot" else "release"
-val gitRef = if (isSnapshot) versionDetails.gitHash else versionDetails.lastTag
+version = if (version == "unspecified") "local" else version.toString().removePrefix("v")
+status = if (version == "local") "snapshot" else "release"
 
 subprojects {
 	group = rootProject.group
@@ -53,6 +52,7 @@ subprojects {
 	afterEvaluate {
 		apply {
 			plugin("org.jetbrains.dokka")
+			plugin("org.jetbrains.dokka-javadoc")
 			plugin("org.gradle.maven-publish")
 			plugin("org.gradle.signing")
 		}
@@ -64,14 +64,13 @@ subprojects {
 			from(sourceSets.main.map { it.allSource })
 		}
 
-		tasks.withType<DokkaTask> {
+		val projectPath = projectDir.absoluteFile.relativeTo(rootProject.projectDir.absoluteFile)
+		configure<DokkaExtension> {
 			dokkaSourceSets.named("main") {
-				this.DokkaSourceSetID(if (extra.has("artifactId")) extra["artifactId"] as String else project.name)
 				sourceLink {
-					val projectPath = projectDir.absoluteFile.relativeTo(rootProject.projectDir.absoluteFile)
-					localDirectory.set(file("src/main/kotlin"))
-					remoteUrl.set(uri("https://github.com/$githubRepository/blob/$gitRef/$projectPath/src/main/kotlin").toURL())
-					remoteLineSuffix.set("#L")
+					localDirectory = file("src/main/kotlin")
+					remoteUrl = uri("https://github.com/$githubRepository/blob/main/$projectPath/src/main/kotlin")
+					remoteLineSuffix = "#L"
 				}
 			}
 		}
@@ -80,7 +79,7 @@ subprojects {
 			group = "build"
 			description = "Assembles the Kotlin docs with Dokka"
 			archiveClassifier.set("javadoc")
-			from(tasks.named("dokkaJavadoc"))
+			from(tasks.named("dokkaGeneratePublicationJavadoc"))
 		}
 
 		artifacts {
@@ -151,14 +150,11 @@ subprojects {
 		tasks.register("release") {
 			group = "release"
 			description = "Releases the project to all remote repositories"
-			dependsOn(publishToGithub, publishToMavenCentral, rootProject.tasks.closeAndReleaseStagingRepository)
+			dependsOn(publishToGithub, publishToMavenCentral, rootProject.tasks.closeAndReleaseStagingRepositories)
 		}
 
-		rootProject.tasks.closeAndReleaseStagingRepository { mustRunAfter(publishToMavenCentral) }
+		rootProject.tasks.closeAndReleaseStagingRepositories { mustRunAfter(publishToMavenCentral) }
 	}
 }
 
-val Project.isSnapshot get() = versionDetails.commitDistance != 0
-fun String.drop(prefix: String) = if (this.startsWith(prefix)) this.drop(prefix.length) else this
 fun String.firstUpper() = this.replaceFirstChar { it.titlecase() }
-val Project.versionDetails get() = (this.extra["versionDetails"] as groovy.lang.Closure<*>)() as com.palantir.gradle.gitversion.VersionDetails

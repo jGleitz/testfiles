@@ -1,0 +1,23 @@
+name: Pull Request Title
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+jobs:
+  check:
+    name: Check Title Format
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: read
+
+    steps:
+      - name: Check Pull Request Title
+        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

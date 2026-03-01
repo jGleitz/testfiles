@@ -1,7 +1,5 @@
-import org.gradle.api.JavaVersion.VERSION_1_8
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.JavaVersion.VERSION_17
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
 	kotlin("jvm")
@@ -12,46 +10,36 @@ val artifactId by extra("spek-testfiles")
 val description by extra("Manage test files and directories neatly when testing with Spek!")
 
 dependencies {
-	val spekVersion = "2.0.17"
-
 	// Spek is a peer dependency
-	compileOnly(name = "spek-dsl-jvm", group = "org.spekframework.spek2", version = spekVersion)
-	compileOnly(name = "spek-runtime-jvm", group = "org.spekframework.spek2", version = spekVersion)
+	compileOnly("org.spekframework.spek2:spek-dsl-jvm:2.0.17")
+	compileOnly("org.spekframework.spek2:spek-runtime-jvm:2.0.17")
 
 	api(project(":base"))
-	testImplementation(name = "spek-dsl-jvm", version = spekVersion, group = "org.spekframework.spek2")
-	testImplementation(name = "atrium-fluent-en_GB", version = "0.16.0", group = "ch.tutteli.atrium")
-	testRuntimeOnly(name = "spek-runner-junit5", version = spekVersion, group = "org.spekframework.spek2")
+	testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.17")
+	testImplementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.16.0")
+	testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:2.0.17")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	constraints {
-		testImplementation(kotlin("reflect", version = KotlinCompilerVersion.VERSION))
+		testImplementation(kotlin("reflect"))
 	}
 }
 
 java {
-	sourceCompatibility = VERSION_1_8
-	targetCompatibility = VERSION_1_8
+	sourceCompatibility = VERSION_17
+	targetCompatibility = VERSION_17
 }
 
 kotlin {
 	explicitApi()
-}
-
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		jvmTarget = "1.8"
+	compilerOptions {
+		jvmTarget = JvmTarget.JVM_17
 	}
 }
 
-tasks.compileTestKotlin {
-	kotlinOptions {
-		freeCompilerArgs += "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
-	}
-}
-
-tasks.withType<DokkaTask> {
-	dokkaSourceSets.named("main") {
-		samples.from("src/test/kotlin/samples/ExampleSpek.kt")
+dokka {
+	dokkaSourceSets.main {
+		samples.from("src/test/kotlin/samples/ExampleSpec.kt")
 	}
 }
 
