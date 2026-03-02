@@ -1,5 +1,5 @@
 [libraries]
-atrium-fluent-en-gb = { module = "ch.tutteli.atrium:atrium-fluent-en_GB", version = "0.16.0" }
-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
-kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version = "4.6.4" }
-spek-runner-junit5 = { module = "org.spekframework.spek2:spek-runner-junit5", version = "2.0.17" }
+atrium-fluent-en-gb = "ch.tutteli.atrium:atrium-fluent-en_GB:0.16.0"
+junit-platform-launcher = "org.junit.platform:junit-platform-launcher:6.0.3"
+kotest-runner-junit5 = "io.kotest:kotest-runner-junit5:4.6.4"
+spek-runner-junit5 = "org.spekframework.spek2:spek-runner-junit5:2.0.17"
