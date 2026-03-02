@@ -1,5 +1,9 @@
 rootProject.name = "testfiles"
 
+plugins {
+  id("com.gradle.develocity") version "4.3.2"
+}
+
 dependencyResolutionManagement {
   versionCatalogs {
     create("testLibs") {
@@ -9,10 +13,6 @@ dependencyResolutionManagement {
       from(files("gradle/buildLibs.versions.toml"))
     }
   }
-}
-
-plugins {
-  id("com.gradle.develocity") version "4.3.2"
 }
 
 include("base", "kotest", "spek")

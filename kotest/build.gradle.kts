@@ -17,10 +17,6 @@ dependencies {
 	testImplementation(testLibs.kotest.runner.junit5)
 	testImplementation(testLibs.atrium.fluent.en.gb)
 	testRuntimeOnly(testLibs.junit.platform.launcher)
-
-	constraints {
-		testImplementation(testLibs.kotlin.reflect)
-	}
 }
 
 java {

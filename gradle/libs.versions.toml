@@ -1,8 +1,7 @@
 [versions]
-kotest = "4.6.4"
 spek = "2.0.17"
 
 [libraries]
-kotest-framework-api = { module = "io.kotest:kotest-framework-api", version.ref = "kotest" }
+kotest-framework-api = { module = "io.kotest:kotest-framework-api", version = "4.6.4" }
 spek-dsl-jvm = { module = "org.spekframework.spek2:spek-dsl-jvm", version.ref = "spek" }
 spek-runtime-jvm = { module = "org.spekframework.spek2:spek-runtime-jvm", version.ref = "spek" }
