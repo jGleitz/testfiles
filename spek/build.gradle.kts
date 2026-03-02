@@ -12,7 +12,7 @@ val description by extra("Manage test files and directories neatly when testing 
 dependencies {
 	// Spek is a peer dependency
 	compileOnly("org.spekframework.spek2:spek-dsl-jvm:2.0.19")
-	compileOnly("org.spekframework.spek2:spek-runtime-jvm:2.0.17")
+	compileOnly("org.spekframework.spek2:spek-runtime-jvm:2.0.19")
 
 	api(project(":base"))
 	testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.19")
