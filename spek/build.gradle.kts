@@ -17,7 +17,7 @@ dependencies {
 	api(project(":base"))
 	testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.19")
 	testImplementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.16.0")
-	testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:2.0.17")
+	testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:2.0.19")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	constraints {
