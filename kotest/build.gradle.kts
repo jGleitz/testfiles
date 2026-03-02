@@ -15,7 +15,7 @@ dependencies {
 	compileOnly("io.kotest:kotest-framework-api:4.6.4")
 
 	testImplementation("io.kotest:kotest-runner-junit5:4.6.4")
-	testImplementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.16.0")
+	testImplementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.18.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	constraints {
