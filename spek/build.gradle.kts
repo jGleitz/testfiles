@@ -11,11 +11,11 @@ val description by extra("Manage test files and directories neatly when testing 
 
 dependencies {
 	// Spek is a peer dependency
-	compileOnly("org.spekframework.spek2:spek-dsl-jvm:2.0.17")
+	compileOnly("org.spekframework.spek2:spek-dsl-jvm:2.0.19")
 	compileOnly("org.spekframework.spek2:spek-runtime-jvm:2.0.17")
 
 	api(project(":base"))
-	testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.17")
+	testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.19")
 	testImplementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.16.0")
 	testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:2.0.17")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
