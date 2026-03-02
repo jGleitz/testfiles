@@ -1,12 +1,12 @@
 import org.jetbrains.dokka.gradle.DokkaExtension
 
 plugins {
-	kotlin("jvm") version "2.3.10"
-	id("org.jetbrains.dokka") version "2.1.0"
-	id("org.jetbrains.dokka-javadoc") version "2.1.0" apply false
+	alias(buildLibs.plugins.kotlin.jvm)
+	alias(buildLibs.plugins.dokka)
+	alias(buildLibs.plugins.dokka.javadoc) apply false
 	`maven-publish`
 	signing
-	id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
+	alias(buildLibs.plugins.nexus.publish)
 	idea
 }
 
