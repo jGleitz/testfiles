@@ -1,0 +1,11 @@
+[versions]
+atrium = "0.16.0"
+kotest = "4.6.4"
+spek = "2.0.17"
+
+[libraries]
+atrium-fluent-en-gb = { module = "ch.tutteli.atrium:atrium-fluent-en_GB", version.ref = "atrium" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+spek-runner-junit5 = { module = "org.spekframework.spek2:spek-runner-junit5", version.ref = "spek" }

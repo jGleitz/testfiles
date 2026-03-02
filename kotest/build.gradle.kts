@@ -2,8 +2,8 @@ import org.gradle.api.JavaVersion.VERSION_17
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-	kotlin("jvm")
-	id("org.jetbrains.dokka")
+	alias(buildLibs.plugins.kotlin.jvm)
+	alias(buildLibs.plugins.dokka)
 }
 
 val artifactId by extra("kotest-files")
@@ -12,14 +12,14 @@ val description by extra("Manage test files and directories neatly when testing 
 dependencies {
 	api(project(":base"))
 	// Kotest is a peer dependency
-	compileOnly("io.kotest:kotest-framework-api:4.6.4")
+	compileOnly(libs.kotest.framework.api)
 
-	testImplementation("io.kotest:kotest-runner-junit5:4.6.4")
-	testImplementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.16.0")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation(testLibs.kotest.runner.junit5)
+	testImplementation(testLibs.atrium.fluent.en.gb)
+	testRuntimeOnly(testLibs.junit.platform.launcher)
 
 	constraints {
-		testImplementation(kotlin("reflect"))
+		testImplementation(testLibs.kotlin.reflect)
 	}
 }
 
