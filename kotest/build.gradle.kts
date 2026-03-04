@@ -12,7 +12,7 @@ val description by extra("Manage test files and directories neatly when testing 
 dependencies {
 	api(project(":base"))
 	// Kotest is a peer dependency
-	compileOnly("io.kotest:kotest-framework-api:4.6.4")
+	compileOnly("io.kotest:kotest-framework-api:5.9.1")
 
 	testImplementation("io.kotest:kotest-runner-junit5:4.6.4")
 	testImplementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.18.0")
