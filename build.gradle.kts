@@ -38,14 +38,14 @@ tasks.withType<Test> {
 }
 
 val ossrhUsername: String? by project
-val ossrhPassword: String? by project
+val [REDACTED]: String? by project
 val githubRepository: String? by project
 val githubOwner = githubRepository?.split("/")?.get(0)
 val githubToken: String? by project
 
 val mavenCentral = nexusPublishing.repositories.sonatype {
 	username.set(ossrhUsername)
-	password.set(ossrhPassword)
+	password.set([REDACTED])
 }
 
 subprojects {
