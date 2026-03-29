@@ -1,51 +1,51 @@
-import org.gradle.api.JavaVersion.VERSION_1_8
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm")
-	id("org.jetbrains.dokka")
+kotlin("multiplatform")
+id("org.jetbrains.dokka")
 }
 
 val artifactId by extra("testfiles")
 val description by extra("Manage test files and directories neatly!")
 
-dependencies {
-	val spekVersion = "2.0.17"
-
-	testImplementation(name = "spek-dsl-jvm", version = spekVersion, group = "org.spekframework.spek2")
-	testImplementation(name = "atrium-fluent-en_GB", version = "0.16.0", group = "ch.tutteli.atrium")
-	testRuntimeOnly(name = "spek-runner-junit5", version = spekVersion, group = "org.spekframework.spek2")
-
-	constraints {
-		testImplementation(kotlin("reflect", version = KotlinCompilerVersion.VERSION))
-	}
-}
-
-java {
-	sourceCompatibility = VERSION_1_8
-	targetCompatibility = VERSION_1_8
-}
-
 kotlin {
-	explicitApi()
+jvm()
+js(IR) {
+nodejs()
+}
+
+sourceSets {
+val commonMain by getting {
+dependencies {
+api("com.squareup.okio:okio:3.9.0")
+}
+}
+
+val jvmTest by getting {
+dependencies {
+val spekVersion = "2.0.17"
+implementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
+implementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.16.0")
+runtimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
+implementation(kotlin("reflect"))
+}
+}
+}
 }
 
 tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		jvmTarget = "1.8"
-		freeCompilerArgs += "-Xopt-in=kotlin.io.path.ExperimentalPathApi"
-	}
+kotlinOptions {
+jvmTarget = "1.8"
+}
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+useJUnitPlatform()
 
-	val testPwd = buildDir.resolve("test-pwd")
-	doFirst {
-		testPwd.mkdirs()
-	}
-	workingDir = testPwd
+val testPwd = buildDir.resolve("test-pwd")
+doFirst {
+testPwd.mkdirs()
 }
-
-
+workingDir = testPwd
+}
