@@ -2,8 +2,8 @@ import org.gradle.api.JavaVersion.VERSION_17
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-	kotlin("jvm")
-	id("org.jetbrains.dokka")
+	alias(buildLibs.plugins.kotlin.jvm)
+	alias(buildLibs.plugins.dokka)
 }
 
 val artifactId by extra("spek-testfiles")
@@ -11,18 +11,14 @@ val description by extra("Manage test files and directories neatly when testing 
 
 dependencies {
 	// Spek is a peer dependency
-	compileOnly("org.spekframework.spek2:spek-dsl-jvm:2.0.19")
-	compileOnly("org.spekframework.spek2:spek-runtime-jvm:2.0.19")
+	compileOnly(libs.spek.dsl.jvm)
+	compileOnly(libs.spek.runtime.jvm)
 
 	api(project(":base"))
-	testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.19")
-	testImplementation("ch.tutteli.atrium:atrium-fluent-en_GB:0.18.0")
-	testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:2.0.19")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-	constraints {
-		testImplementation(kotlin("reflect"))
-	}
+	testImplementation(libs.spek.dsl.jvm)
+	testImplementation(testLibs.atrium.fluent.en.gb)
+	testRuntimeOnly(testLibs.spek.runner.junit5)
+	testRuntimeOnly(testLibs.junit.platform.launcher)
 }
 
 java {
