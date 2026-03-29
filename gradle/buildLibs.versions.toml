@@ -1,5 +1,5 @@
 [versions]
-dokka = "2.1.0"
+dokka = "2.2.0"
 
 [plugins]
 develocity = "com.gradle.develocity:4.3.2"
