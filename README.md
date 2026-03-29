@@ -11,8 +11,8 @@ A test helper to easily create files and directories for testing purposes.
 
 Framework | Link | Dependency
 --- | --- | ---
-[Spek](https://www.spekframework.org/) |  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/spek-testfiles/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/spek-testfiles) | `de.joshuagleitze:spek-testfiles:<version>`
-[Kotest](https://kotest.io/) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/kotest-files/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.joshuagleitze/kotest-files) | `de.joshuagleitze:kotest-files:<version>`
+[Spek](https://www.spekframework.org/) |  [![Maven Central](https://img.shields.io/maven-central/v/de.joshuagleitze/spek-testfiles)](https://central.sonatype.com/artifact/de.joshuagleitze/spek-testfiles) | `de.joshuagleitze:spek-testfiles:<version>`
+[Kotest](https://kotest.io/) | [![Maven Central](https://img.shields.io/maven-central/v/de.joshuagleitze/kotest-files)](https://central.sonatype.com/artifact/de.joshuagleitze/kotest-files) | `de.joshuagleitze:kotest-files:<version>`
 
 ## Usage
 
