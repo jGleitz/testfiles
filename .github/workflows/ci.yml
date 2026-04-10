@@ -40,7 +40,7 @@ jobs:
 
       - name: Upload Test Results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: test-results-${{ matrix.os }}-java-${{ matrix.java-version }}
           path: "**/build/test-results/"
@@ -53,7 +53,7 @@ jobs:
 
       - name: Upload Documentation
         if: matrix.os == 'ubuntu-latest' && matrix.java-version == 25
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: documentation
           path: ./build/dokka/html
