@@ -5,5 +5,5 @@ dokka = "2.2.0"
 develocity = "com.gradle.develocity:4.4.1"
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
-kotlin-jvm = "org.jetbrains.kotlin.jvm:2.3.20"
+kotlin-jvm = "org.jetbrains.kotlin.jvm:2.3.21"
 nexus-publish = "io.github.gradle-nexus.publish-plugin:2.0.0"
