@@ -2,7 +2,7 @@
 dokka = "2.2.0"
 
 [plugins]
-develocity = "com.gradle.develocity:4.4.3"
+develocity = "com.gradle.develocity:4.5.0"
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
 kotlin-jvm = "org.jetbrains.kotlin.jvm:2.4.0"
